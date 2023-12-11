@@ -72,18 +72,27 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         ob.data.edit_bones['DEF-upper_arm.L'].tail = ob.data.edit_bones['DEF-upper_arm.L.001'].tail
         ob.data.edit_bones['DEF-forearm.L'].tail = ob.data.edit_bones['DEF-forearm.L.001'].tail
         ob.data.edit_bones['DEF-forearm.L'].parent = ob.data.edit_bones['DEF-upper_arm.L.001'].parent
-        ob.data.edit_bones['DEF-hand.L'].parent = ob.data.edit_bones['DEF-forearm.L.001'].parent
-        ob.data.edit_bones['DEF-palm.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.L.001'])
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.L.001'])
+
+        ob.data.edit_bones['DEF-hand.L'].parent = ob.data.edit_bones['DEF-forearm.L']
+        ob.data.edit_bones['DEF-f_index.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
+        ob.data.edit_bones['DEF-f_middle.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
+        ob.data.edit_bones['DEF-f_ring.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
+        ob.data.edit_bones['DEF-f_pinky.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
 
         ob.data.edit_bones['DEF-upper_arm.R'].tail = ob.data.edit_bones['DEF-upper_arm.R.001'].tail
         ob.data.edit_bones['DEF-forearm.R'].tail = ob.data.edit_bones['DEF-forearm.R.001'].tail
         ob.data.edit_bones['DEF-forearm.R'].parent = ob.data.edit_bones['DEF-upper_arm.R.001'].parent
-        ob.data.edit_bones['DEF-hand.R'].parent = ob.data.edit_bones['DEF-forearm.R.001'].parent
-        ob.data.edit_bones['DEF-palm.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.R.001'])
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.R.001'])
+
+        ob.data.edit_bones['DEF-hand.R'].parent = ob.data.edit_bones['DEF-forearm.R']
+        ob.data.edit_bones['DEF-f_index.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
+        ob.data.edit_bones['DEF-f_middle.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
+        ob.data.edit_bones['DEF-f_ring.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
+        ob.data.edit_bones['DEF-f_pinky.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
+
 
         ob.data.edit_bones['DEF-thigh.L'].tail = ob.data.edit_bones['DEF-thigh.L.001'].tail
         ob.data.edit_bones['DEF-shin.L'].tail = ob.data.edit_bones['DEF-shin.L.001'].tail
