@@ -1,10 +1,18 @@
-#script to make rigify compatible with unity humanoid
+rigify_info = {
+    "name": "Godot Rigs",
+    "description": "Rigs built with Godot compatible skeletons in mind.",
+    "author": "Cat Prisbrey",
+    "warning": "Experimental.",
+    # Web site links
+    "link": "https://github.com/catprisbrey/Rigify-To-Godot",
+}
+#script to make rigify compatible with Godot humanoid
 #HOWTO: right after generating rig using rigify
-#	press armature -> Rigify To Unity Converter -> (Prepare rig for unity) button
+#	press armature -> Rigify To Godot Converter -> (Prepare rig for Godot) button
 bl_info = {
-    "name": "Rigify to Unity",
+    "name": "Rigify to Godot",
     "category": "Rigging",
-    "description": "Change Rigify rig into Mecanim-ready rig for Unity",
+    "description": "Change Rigify rig into a Godot compatible the basic humanoid",
     "location": "At the bottom of Rigify rig data/armature tab",
     "blender":(2,80,0)
 }
@@ -13,8 +21,8 @@ import bpy
 import re
 
 
-class UnityMecanim_Panel(bpy.types.Panel):
-    bl_label = "Rigify to Unity converter"
+class GodotMecanim_Panel(bpy.types.Panel):
+    bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "data"
@@ -24,12 +32,12 @@ class UnityMecanim_Panel(bpy.types.Panel):
         return context.object.type == 'ARMATURE' and "DEF-upper_arm.L.001" in bpy.context.object.data.bones
     
     def draw(self, context):
-        self.layout.operator("rig4mec.convert2unity")
+        self.layout.operator("rig4mec.convert2godot")
         
         
-class UnityMecanim_Convert2Unity(bpy.types.Operator):
-    bl_idname = "rig4mec.convert2unity"
-    bl_label = "Prepare rig for unity"
+class GodotMecanim_Convert2Godot(bpy.types.Operator):
+    bl_idname = "rig4mec.convert2godot"
+    bl_label = "Prepare rig for Godot"
     
     def execute(self, context):
         ob = bpy.context.object
@@ -57,10 +65,15 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
         ob.data.edit_bones['DEF-thigh.L'].parent = ob.data.edit_bones['DEF-spine']
         ob.data.edit_bones['DEF-thigh.R'].parent = ob.data.edit_bones['DEF-spine']
 
+        ob.data.edit_bones['DEF-jaw'].parent = ob.data.edit_bones['DEF-spine.006']
+        ob.data.edit_bones['DEF-eye.L'].parent = ob.data.edit_bones['DEF-spine.006']
+        ob.data.edit_bones['DEF-eye.R'].parent = ob.data.edit_bones['DEF-spine.006']
+
         ob.data.edit_bones['DEF-upper_arm.L'].tail = ob.data.edit_bones['DEF-upper_arm.L.001'].tail
         ob.data.edit_bones['DEF-forearm.L'].tail = ob.data.edit_bones['DEF-forearm.L.001'].tail
         ob.data.edit_bones['DEF-forearm.L'].parent = ob.data.edit_bones['DEF-upper_arm.L.001'].parent
         ob.data.edit_bones['DEF-hand.L'].parent = ob.data.edit_bones['DEF-forearm.L.001'].parent
+        ob.data.edit_bones['DEF-palm.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.L.001'])
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.L.001'])
 
@@ -68,6 +81,7 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
         ob.data.edit_bones['DEF-forearm.R'].tail = ob.data.edit_bones['DEF-forearm.R.001'].tail
         ob.data.edit_bones['DEF-forearm.R'].parent = ob.data.edit_bones['DEF-upper_arm.R.001'].parent
         ob.data.edit_bones['DEF-hand.R'].parent = ob.data.edit_bones['DEF-forearm.R.001'].parent
+        ob.data.edit_bones['DEF-palm.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.R.001'])
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.R.001'])
 
@@ -97,7 +111,8 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        namelist = [("DEF-spine.006", "DEF-head"),("DEF-spine.005","DEF-neck")]
+        # fix a few names quick
+        namelist = [("DEF-spine", "DEF-hips"),("DEF-spine.005","DEF-neck"),("DEF-spine.006", "DEF-head")]
 
         for name, newname in namelist:
             # get the pose bone with name
@@ -108,17 +123,34 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
             # rename
             pb.name = newname
 
-        self.report({'INFO'}, 'Unity ready rig!')                
+
+        # Remove "DEF-" from every deform bone name
+        bpy.ops.object.mode_set(mode='EDIT')
+
+        for edit_bone in ob.data.edit_bones:
+            if edit_bone.name.startswith("DEF-"):
+                edit_bone.name = edit_bone.name[len("DEF-"):]
+
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.report({'INFO'}, 'Godot ready rig!')
+
+        # Set armature viewport display to 'In Front'
+        ob.show_in_front = True
+
+        # Set armature display mode to 'Wire'
+        ob.display_type = 'WIRE'
+
+        ob.name = "godot_rig"
 
         return{'FINISHED'}
 
 def register():
     #classes     
-    bpy.utils.register_class(UnityMecanim_Panel)
-    bpy.utils.register_class(UnityMecanim_Convert2Unity)
-    
+    bpy.utils.register_class(GodotMecanim_Panel)
+    bpy.utils.register_class(GodotMecanim_Convert2Godot)
+
     
 def unregister():
     #classes
-    bpy.utils.unregister_class(UnityMecanim_Panel)
-    bpy.utils.unregister_class(UnityMecanim_Convert2Unity)
+    bpy.utils.unregister_class(GodotMecanim_Panel)
+    bpy.utils.unregister_class(GodotMecanim_Convert2Godot)
