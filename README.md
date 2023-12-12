@@ -18,7 +18,7 @@
 
 ###
 
-<p align="left">https://youtu.be/QYx2mYBL3T8<br><br>This ZIP file is both a plugin AND a Rigify feature set. You install it in two places of the Add-ons window.<br><br><br>1. Enabled Rigify:<br>- Open Blender's preferences<br>- Select Add-Ons<br>- Enable Rigify plugin<br><br>2. Install the Godot feature set<br>- Open the Rigify drop down<br>- Install Feature Set<br>- Select the Rigodotify.zip file<br><br>3. Install the rig converter plugin:<br>- In Blender's Add-ons again<br>- Select "Install"<br>- Select the Rigodoify.zip file again<br>- Enable the Rigodotify plugin</p>
+<p align="left">https://youtu.be/QYx2mYBL3T8<br><br>This ZIP file is both a plugin AND a Rigify feature set. You install it in two places of the Add-ons window.<br><br><br>1. Enabled Rigify:<br>- Open Blender's preferences<br>- Select Add-Ons<br>- Enable Rigify plugin<br><br>2. Install the Godot feature set<br>- Open the Rigify drop down<br>- Install Feature Set<br>- Select the Rigodotify.zip file<br><br>3. Install the rig converter plugin:<br>- In Blender's Add-ons again<br>- Select "Install"<br>- Select the Rigodotify.zip file again<br>- Enable the Rigodotify plugin</p>
 
 ###
 
