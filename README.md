@@ -2,7 +2,7 @@
 
 ###
 
-<p align="left">A dual purpose Rigify feature set and Blender rig converter plugin. Adds Godot/Unity style skeletons to your armature options. Rigs can be converted in a button press to make them game engine compatible.<br><br>Built for Godot but should be Unity compatible as well.</p>
+<p align="left">A dual purpose Rigify feature set and Blender rig converter plugin. Adds Godot/Unity style skeletons to your armature options. Rigs can be converted in a button press to make them game engine compatible.<br><br>Built for Godot but should be Unity compatible as well. https://youtu.be/QYx2mYBL3T8?</p>
 
 ###
 
