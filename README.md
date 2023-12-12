@@ -10,7 +10,7 @@
 
 ###
 
-<p align="left">Skeletons and rigs used for game development are distinct to those used for animation. They tend to have far fewer bones, and a hierarchical bone order. This makes animations more efficient for processing and also aids in animation transferring to other characters. <br><br>This plugin and feature set produces a nearly standard Godot or Unity skeleton with extra bones removed, the bone order fixed, and friendlier names given for mapping them in engine.</p>
+<p align="left">Skeletons and rigs used for game development are distinct to those used for animation. They tend to be placed in T-Pose, have far fewer bones, and a hierarchical bone order. This makes animations more efficient for processing and also aids in animation transferring to other characters. <br><br>This plugin and feature set produces a nearly standard Godot or Unity skeleton with extra bones removed, the bone order fixed, and friendlier names given for mapping them in engine.</p>
 
 ###
 
