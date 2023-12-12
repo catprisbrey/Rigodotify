@@ -23,7 +23,7 @@
 ###
 
 <div align="center">
-  <img height="512" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/install_plugin_and_featureset.gif?raw=true"  />
+  <img height="640" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/install_plugin_and_featureset.gif?raw=true"  />
 </div>
 
 ###
@@ -39,7 +39,7 @@
 <br clear="both">
 
 <div align="center">
-  <img height="512" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/metarig_and_rig.gif?raw=true"  />
+  <img height="640" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/metarig_and_rig.gif?raw=true"  />
 </div>
 
 ###
@@ -53,7 +53,7 @@
 ###
 
 <div align="center">
-  <img height="512" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/metarig-differences.png?raw=true"  />
+  <img height="640" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/metarig-differences.png?raw=true"  />
 </div>
 
 ###
@@ -63,7 +63,7 @@
 ###
 
 <div align="center">
-  <img height="512" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/final-bone-structure.png?raw=true"  />
+  <img height="640" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/final-bone-structure.png?raw=true"  />
 </div>
 
 ###
