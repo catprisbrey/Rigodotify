@@ -1,20 +1,21 @@
 rigify_info = {
     "name": "Godot Rigs",
-    "description": "Rigs built with Godot compatible skeletons in mind.",
+    "description": "Rigs built with Godot/Unity compatible skeletons in mind.",
     "author": "Cat Prisbrey",
     "warning": "Experimental.",
     # Web site links
-    "link": "https://github.com/catprisbrey/Rigify-To-Godot",
+    "link": "https://github.com/catprisbrey/Rigodotify",
 }
 #script to make rigify compatible with Godot humanoid
 #HOWTO: right after generating rig using rigify
 #	press armature -> Rigify To Godot Converter -> (Prepare rig for Godot) button
 bl_info = {
-    "name": "Rigify to Godot",
+    "name": "Rigodotify",
     "category": "Rigging",
-    "description": "Change Rigify rig into a Godot compatible the basic humanoid",
+    "description": "Change Rigify rig into a Godot/Unity compatible basic humanoid",
     "location": "At the bottom of Rigify rig data/armature tab",
-    "blender":(2,80,0)
+    "link": "https://github.com/catprisbrey/Rigodotify",
+    "blender":(4,0,0)
 }
 
 import bpy
@@ -65,9 +66,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         ob.data.edit_bones['DEF-thigh.L'].parent = ob.data.edit_bones['DEF-spine']
         ob.data.edit_bones['DEF-thigh.R'].parent = ob.data.edit_bones['DEF-spine']
 
-        ob.data.edit_bones['DEF-jaw'].parent = ob.data.edit_bones['DEF-spine.006']
-        ob.data.edit_bones['DEF-eye.L'].parent = ob.data.edit_bones['DEF-spine.006']
-        ob.data.edit_bones['DEF-eye.R'].parent = ob.data.edit_bones['DEF-spine.006']
+        ob.data.edit_bones['DEF-jaw'].parent = ob.data.edit_bones['DEF-spine.005']
+        ob.data.edit_bones['DEF-eye.L'].parent = ob.data.edit_bones['DEF-spine.005']
+        ob.data.edit_bones['DEF-eye.R'].parent = ob.data.edit_bones['DEF-spine.005']
 
         ob.data.edit_bones['DEF-upper_arm.L'].tail = ob.data.edit_bones['DEF-upper_arm.L.001'].tail
         ob.data.edit_bones['DEF-forearm.L'].tail = ob.data.edit_bones['DEF-forearm.L.001'].tail
@@ -121,7 +122,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # fix a few names quick
-        namelist = [("DEF-spine", "DEF-hips"),("DEF-spine.005","DEF-neck"),("DEF-spine.006", "DEF-head")]
+        namelist = [("DEF-spine", "DEF-hips"),("DEF-spine.004","DEF-neck"),("DEF-spine.005", "DEF-head")]
 
         for name, newname in namelist:
             # get the pose bone with name
@@ -134,11 +135,11 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
 
         # Remove "DEF-" from every deform bone name
-        bpy.ops.object.mode_set(mode='EDIT')
+        #bpy.ops.object.mode_set(mode='EDIT')
 
-        for edit_bone in ob.data.edit_bones:
-            if edit_bone.name.startswith("DEF-"):
-                edit_bone.name = edit_bone.name[len("DEF-"):]
+        #for edit_bone in ob.data.edit_bones:
+        #    if edit_bone.name.startswith("DEF-"):
+        #        edit_bone.name = edit_bone.name[len("DEF-"):]
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
