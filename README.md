@@ -1,4 +1,4 @@
-<h1 align="left">Rigodoify</h1>
+<h1 align="left">Rigodotify</h1>
 
 ###
 
