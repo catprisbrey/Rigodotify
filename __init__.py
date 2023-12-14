@@ -122,15 +122,18 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
 
-        if 'DEF-pelvis.L' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
-        if 'DEF-pelvis.R' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
+        check_and_parent('DEF-breast.L','DEF-spine.003')
+        check_and_parent('DEF-breast.R','DEF-spine.003')
 
-        if 'DEF-breast.L' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
-        if 'DEF-breast.R' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
+        #if 'DEF-pelvis.L' in ob.data.bones :
+        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
+        #if 'DEF-pelvis.R' in ob.data.bones :
+        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
+
+        #if 'DEF-breast.L' in ob.data.bones :
+        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
+        #if 'DEF-breast.R' in ob.data.bones :
+        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
