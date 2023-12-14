@@ -21,6 +21,19 @@ bl_info = {
 import bpy
 import re
 
+def check_and_parent(child_bone,parent_bone,to_tail = False) :
+    ob = bpy.context.object
+
+    if child_bone in ob.data.edit_bones and parent_bone in ob.data.edit_bones:
+        if to_tail:
+            ob.data.edit_bones[child_bone].tail = ob.data.edit_bones[parent_bone].tail
+        else:
+            ob.data.edit_bones[child_bone].parent = ob.data.edit_bones[parent_bone]
+
+def check_and_remove(bone_name) :
+    ob = bpy.context.object
+    if bone_name in ob.data.edit_bones :
+        ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
@@ -40,6 +53,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
     bl_idname = "rig4mec.convert2godot"
     bl_label = "Prepare rig for Godot"
     
+
+
     def execute(self, context):
         ob = bpy.context.object
         
@@ -57,57 +72,55 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         bpy.ops.object.mode_set(mode='EDIT')
         
-        ob.data.edit_bones['DEF-shoulder.L'].parent = ob.data.edit_bones['DEF-spine.003']
-        ob.data.edit_bones['DEF-shoulder.R'].parent = ob.data.edit_bones['DEF-spine.003']
-        
-        ob.data.edit_bones['DEF-upper_arm.L'].parent = ob.data.edit_bones['DEF-shoulder.L']
-        ob.data.edit_bones['DEF-upper_arm.R'].parent = ob.data.edit_bones['DEF-shoulder.R']
-        
-        ob.data.edit_bones['DEF-thigh.L'].parent = ob.data.edit_bones['DEF-spine']
-        ob.data.edit_bones['DEF-thigh.R'].parent = ob.data.edit_bones['DEF-spine']
+        check_and_parent('DEF-shoulder.L','DEF-spine.003')
+        check_and_parent('DEF-shoulder.R','DEF-spine.003')
+        check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
+        check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
+        check_and_parent('DEF-thigh.L','DEF-spine')
+        check_and_parent('DEF-thigh.R','DEF-spine')
+        check_and_parent('DEF-jaw','DEF-spine.005')
+        check_and_parent('DEF-eye.L','DEF-spine.005')
+        check_and_parent('DEF-eye.R','DEF-spine.005')
 
-        ob.data.edit_bones['DEF-jaw'].parent = ob.data.edit_bones['DEF-spine.005']
-        ob.data.edit_bones['DEF-eye.L'].parent = ob.data.edit_bones['DEF-spine.005']
-        ob.data.edit_bones['DEF-eye.R'].parent = ob.data.edit_bones['DEF-spine.005']
+        check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
+        check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
+        check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
+        check_and_remove('DEF-upper_arm.L.001')
+        check_and_remove('DEF-forearm.L.001')
 
-        ob.data.edit_bones['DEF-upper_arm.L'].tail = ob.data.edit_bones['DEF-upper_arm.L.001'].tail
-        ob.data.edit_bones['DEF-forearm.L'].tail = ob.data.edit_bones['DEF-forearm.L.001'].tail
-        ob.data.edit_bones['DEF-forearm.L'].parent = ob.data.edit_bones['DEF-upper_arm.L.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.L.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.L.001'])
+        check_and_parent('DEF-hand.L','DEF-forearm.L')
+        check_and_parent('DEF-f_index.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_middle.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_ring.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_pinky.01.L','DEF-hand.L')
 
-        ob.data.edit_bones['DEF-hand.L'].parent = ob.data.edit_bones['DEF-forearm.L']
-        ob.data.edit_bones['DEF-f_index.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
-        ob.data.edit_bones['DEF-f_middle.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
-        ob.data.edit_bones['DEF-f_ring.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
-        ob.data.edit_bones['DEF-f_pinky.01.L'].parent = ob.data.edit_bones['DEF-hand.L']
-
-        ob.data.edit_bones['DEF-upper_arm.R'].tail = ob.data.edit_bones['DEF-upper_arm.R.001'].tail
-        ob.data.edit_bones['DEF-forearm.R'].tail = ob.data.edit_bones['DEF-forearm.R.001'].tail
-        ob.data.edit_bones['DEF-forearm.R'].parent = ob.data.edit_bones['DEF-upper_arm.R.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.R.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.R.001'])
-
-        ob.data.edit_bones['DEF-hand.R'].parent = ob.data.edit_bones['DEF-forearm.R']
-        ob.data.edit_bones['DEF-f_index.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
-        ob.data.edit_bones['DEF-f_middle.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
-        ob.data.edit_bones['DEF-f_ring.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
-        ob.data.edit_bones['DEF-f_pinky.01.R'].parent = ob.data.edit_bones['DEF-hand.R']
+        check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
+        check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
+        check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
+        check_and_remove('DEF-upper_arm.R.001')
+        check_and_remove('DEF-forearm.R.001')
 
 
-        ob.data.edit_bones['DEF-thigh.L'].tail = ob.data.edit_bones['DEF-thigh.L.001'].tail
-        ob.data.edit_bones['DEF-shin.L'].tail = ob.data.edit_bones['DEF-shin.L.001'].tail
-        ob.data.edit_bones['DEF-shin.L'].parent = ob.data.edit_bones['DEF-thigh.L.001'].parent
-        ob.data.edit_bones['DEF-foot.L'].parent = ob.data.edit_bones['DEF-shin.L.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-thigh.L.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-shin.L.001'])
+        check_and_parent('DEF-hand.R','DEF-forearm.R')
+        check_and_parent('DEF-f_index.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_pinky.01.R','DEF-hand.R')
 
-        ob.data.edit_bones['DEF-thigh.R'].tail = ob.data.edit_bones['DEF-thigh.R.001'].tail
-        ob.data.edit_bones['DEF-shin.R'].tail = ob.data.edit_bones['DEF-shin.R.001'].tail
-        ob.data.edit_bones['DEF-shin.R'].parent = ob.data.edit_bones['DEF-thigh.R.001'].parent
-        ob.data.edit_bones['DEF-foot.R'].parent = ob.data.edit_bones['DEF-shin.R.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-thigh.R.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-shin.R.001'])
+        check_and_parent('DEF-thigh.L','DEF-thigh.L.001',True)
+        check_and_parent('DEF-shin.L','DEF-shin.L.001',True)
+        check_and_parent('DEF-shin.L','DEF-thigh.L.001')
+        check_and_parent('DEF-foot.L','DEF-shin.L.001')
+        check_and_remove('DEF-thigh.L.001')
+        check_and_remove('DEF-shin.L.001')
+
+
+        check_and_parent('DEF-thigh.R','DEF-thigh.LR.001',True)
+        check_and_parent('DEF-shin.R','DEF-shin.R.001',True)
+        check_and_parent('DEF-shin.R','DEF-thigh.R.001')
+        check_and_parent('DEF-foot.R','DEF-shin.R.001')
+        check_and_remove('DEF-thigh.R.001')
+        check_and_remove('DEF-shin.R.001')
 
         if 'DEF-pelvis.L' in ob.data.bones :
             ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
@@ -155,7 +168,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         return{'FINISHED'}
 
 def register():
-    #classes     
+    #classes
     bpy.utils.register_class(GodotMecanim_Panel)
     bpy.utils.register_class(GodotMecanim_Convert2Godot)
 
