@@ -89,6 +89,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-forearm.L.001')
 
         check_and_parent('DEF-hand.L','DEF-forearm.L')
+        check_and_parent('DEF-thumb.01.L','DEF-hand.L')
         check_and_parent('DEF-f_index.01.L','DEF-hand.L')
         check_and_parent('DEF-f_middle.01.L','DEF-hand.L')
         check_and_parent('DEF-f_ring.01.L','DEF-hand.L')
@@ -102,6 +103,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
 
         check_and_parent('DEF-hand.R','DEF-forearm.R')
+        check_and_parent('DEF-thumb.01.R','DEF-hand.L')
         check_and_parent('DEF-f_index.01.R','DEF-hand.R')
         check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
         check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
