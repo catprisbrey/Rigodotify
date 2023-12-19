@@ -230,6 +230,27 @@ def create(obj):  # noqa
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['shoulder.R']]
     bones['upper_arm.R'] = bone.name
+    bone = arm.edit_bones.new('jaw')
+    bone.head = -0.0000, -0.0862, 1.5833
+    bone.tail = -0.0000, -0.2377, 1.5136
+    bone.roll = -0.0000
+    bone.use_connect = False
+    bone.parent = arm.edit_bones[bones['spine.005']]
+    bones['jaw'] = bone.name
+    bone = arm.edit_bones.new('eye.L')
+    bone.head = 0.0400, -0.1164, 1.6693
+    bone.tail = 0.0400, -0.1788, 1.6696
+    bone.roll = -0.0000
+    bone.use_connect = False
+    bone.parent = arm.edit_bones[bones['spine.005']]
+    bones['eye.L'] = bone.name
+    bone = arm.edit_bones.new('eye.R')
+    bone.head = -0.0400, -0.1164, 1.6693
+    bone.tail = -0.0400, -0.1788, 1.6696
+    bone.roll = -0.0000
+    bone.use_connect = False
+    bone.parent = arm.edit_bones[bones['spine.005']]
+    bones['eye.R'] = bone.name
     bone = arm.edit_bones.new('forearm.L')
     bone.head = 0.4663, 0.0701, 1.4408
     bone.tail = 0.7389, 0.0654, 1.4408
@@ -273,8 +294,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['hand.L']]
     bones['thumb.01.L'] = bone.name
     bone = arm.edit_bones.new('f_middle.01.L')
-    bone.head = 0.8661, 0.0663, 1.4412
-    bone.tail = 0.9084, 0.0683, 1.4412
+    bone.head = 0.8620, 0.0668, 1.4412
+    bone.tail = 0.9043, 0.0688, 1.4412
     bone.roll = 3.1416
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['hand.L']]
@@ -294,8 +315,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['hand.R']]
     bones['thumb.01.R'] = bone.name
     bone = arm.edit_bones.new('f_middle.01.R')
-    bone.head = -0.8661, 0.0663, 1.4412
-    bone.tail = -0.9084, 0.0683, 1.4412
+    bone.head = -0.8620, 0.0668, 1.4412
+    bone.tail = -0.9043, 0.0688, 1.4412
     bone.roll = -3.1416
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['hand.R']]
@@ -315,8 +336,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['thumb.01.L']]
     bones['thumb.02.L'] = bone.name
     bone = arm.edit_bones.new('f_middle.02.L')
-    bone.head = 0.9084, 0.0683, 1.4412
-    bone.tail = 0.9423, 0.0698, 1.4412
+    bone.head = 0.9043, 0.0688, 1.4412
+    bone.tail = 0.9382, 0.0703, 1.4412
     bone.roll = 3.1416
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['f_middle.01.L']]
@@ -336,8 +357,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['thumb.01.R']]
     bones['thumb.02.R'] = bone.name
     bone = arm.edit_bones.new('f_middle.02.R')
-    bone.head = -0.9084, 0.0683, 1.4412
-    bone.tail = -0.9423, 0.0698, 1.4412
+    bone.head = -0.9043, 0.0688, 1.4412
+    bone.tail = -0.9382, 0.0703, 1.4412
     bone.roll = -3.1416
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['f_middle.01.R']]
@@ -357,8 +378,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['thumb.02.L']]
     bones['thumb.03.L'] = bone.name
     bone = arm.edit_bones.new('f_middle.03.L')
-    bone.head = 0.9423, 0.0698, 1.4412
-    bone.tail = 0.9767, 0.0714, 1.4412
+    bone.head = 0.9382, 0.0703, 1.4412
+    bone.tail = 0.9726, 0.0719, 1.4412
     bone.roll = 3.1416
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['f_middle.02.L']]
@@ -378,8 +399,8 @@ def create(obj):  # noqa
     bone.parent = arm.edit_bones[bones['thumb.02.R']]
     bones['thumb.03.R'] = bone.name
     bone = arm.edit_bones.new('f_middle.03.R')
-    bone.head = -0.9423, 0.0698, 1.4412
-    bone.tail = -0.9767, 0.0714, 1.4412
+    bone.head = -0.9382, 0.0703, 1.4412
+    bone.tail = -0.9726, 0.0719, 1.4412
     bone.roll = -3.1416
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['f_middle.02.R']]
@@ -609,6 +630,30 @@ def create(obj):  # noqa
         pass
     assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Arm.R (Tweak)')
     assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Arm.R (FK)')
+    pbone = obj.pose.bones[bones['jaw']]
+    pbone.rigify_type = 'basic.super_copy'
+    pbone.lock_location = (False, False, False)
+    pbone.lock_rotation = (False, False, False)
+    pbone.lock_rotation_w = False
+    pbone.lock_scale = (False, False, False)
+    pbone.rotation_mode = 'QUATERNION'
+    assign_bone_collections(pbone, 'Face')
+    pbone = obj.pose.bones[bones['eye.L']]
+    pbone.rigify_type = 'basic.super_copy'
+    pbone.lock_location = (False, False, False)
+    pbone.lock_rotation = (False, False, False)
+    pbone.lock_rotation_w = False
+    pbone.lock_scale = (False, False, False)
+    pbone.rotation_mode = 'QUATERNION'
+    assign_bone_collections(pbone, 'Face')
+    pbone = obj.pose.bones[bones['eye.R']]
+    pbone.rigify_type = 'basic.super_copy'
+    pbone.lock_location = (False, False, False)
+    pbone.lock_rotation = (False, False, False)
+    pbone.lock_rotation_w = False
+    pbone.lock_scale = (False, False, False)
+    pbone.rotation_mode = 'QUATERNION'
+    assign_bone_collections(pbone, 'Face')
     pbone = obj.pose.bones[bones['forearm.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -668,18 +713,13 @@ def create(obj):  # noqa
         pass
     assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Fingers (Detail)')
     pbone = obj.pose.bones[bones['f_middle.01.L']]
-    pbone.rigify_type = 'limbs.super_finger'
+    pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     assign_bone_collections(pbone, 'Fingers')
-    try:
-        pbone.rigify_parameters.ik_local_location = False
-    except AttributeError:
-        pass
-    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Fingers (Detail)')
     pbone = obj.pose.bones[bones['f_index.01.R']]
     pbone.rigify_type = 'limbs.super_finger'
     pbone.lock_location = (False, False, False)
@@ -707,18 +747,13 @@ def create(obj):  # noqa
         pass
     assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Fingers (Detail)')
     pbone = obj.pose.bones[bones['f_middle.01.R']]
-    pbone.rigify_type = 'limbs.super_finger'
+    pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
     assign_bone_collections(pbone, 'Fingers')
-    try:
-        pbone.rigify_parameters.ik_local_location = False
-    except AttributeError:
-        pass
-    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Fingers (Detail)')
     pbone = obj.pose.bones[bones['f_index.02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)

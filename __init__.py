@@ -82,6 +82,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-eye.L','DEF-spine.005')
         check_and_parent('DEF-eye.R','DEF-spine.005')
 
+
         check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
         check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
         check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
