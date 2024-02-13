@@ -104,7 +104,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
 
         check_and_parent('DEF-hand.R','DEF-forearm.R')
-        check_and_parent('DEF-thumb.01.R','DEF-hand.L')
+        check_and_parent('DEF-thumb.01.R','DEF-hand.R')
         check_and_parent('DEF-f_index.01.R','DEF-hand.R')
         check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
         check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
