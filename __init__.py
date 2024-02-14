@@ -125,8 +125,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
 
-        check_and_parent('DEF-breast.L','DEF-spine.003')
-        check_and_parent('DEF-breast.R','DEF-spine.003')
+        #check_and_parent('DEF-breast.L','DEF-spine.003')
+        #check_and_parent('DEF-breast.R','DEF-spine.003')
 
         #if 'DEF-pelvis.L' in ob.data.bones :
         #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
@@ -152,6 +152,19 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             # rename
             pb.name = newname
 
+        # hide all the extra unused controls
+        bpy.context.object.data.collections["Torso (Tweak)"].is_visible = False
+        bpy.context.object.data.collections["Fingers (Detail)"].is_visible = False
+        bpy.context.object.data.collections["Torso (Tweak)"].is_visible = False
+        bpy.context.object.data.collections["Fingers (Detail)"].is_visible = False
+        bpy.context.object.data.collections["Arm.R (Tweak)"].is_visible = False
+        bpy.context.object.data.collections["Arm.L (Tweak)"].is_visible = False
+        bpy.context.object.data.collections["Arm.L (FK)"].is_visible = False
+        bpy.context.object.data.collections["Arm.R (FK)"].is_visible = False
+        bpy.context.object.data.collections["Leg.L (Tweak)"].is_visible = False
+        bpy.context.object.data.collections["Leg.L (FK)"].is_visible = False
+        bpy.context.object.data.collections["Leg.R (FK)"].is_visible = False
+        bpy.context.object.data.collections["Leg.R (Tweak)"].is_visible = False
 
         # Remove "DEF-" from every deform bone name
         #bpy.ops.object.mode_set(mode='EDIT')
@@ -164,10 +177,10 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         self.report({'INFO'}, 'Godot ready rig!')
 
         # Set armature viewport display to 'In Front'
-        ob.show_in_front = True
+        # ob.show_in_front = True
 
         # Set armature display mode to 'Wire'
-        ob.display_type = 'WIRE'
+        # ob.display_type = 'WIRE'
 
         ob.name = "godot_rig"
 
