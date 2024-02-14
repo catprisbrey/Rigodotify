@@ -125,18 +125,42 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
 
-        #check_and_parent('DEF-breast.L','DEF-spine.003')
-        #check_and_parent('DEF-breast.R','DEF-spine.003')
+        check_and_parent('DEF-breast.L','DEF-spine.003')
+        check_and_parent('DEF-breast.R','DEF-spine.003')
+
+        ob.name = "godot_rig"
+
+        # Fix some odd parenting issues of failed contraints
+        if "DEF-breast.R" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-breast.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "breast.R"
+
+        if "DEF-breast.R" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-breast.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "breast.L"
+
+        if "DEF-jaw" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-jaw"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "jaw"
+
+        if "DEF-eye.L" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-eye.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "eye.L"
+
+        if "DEF-eye.R" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-eye.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "eye.R"
+
 
         #if 'DEF-pelvis.L' in ob.data.bones :
         #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
         #if 'DEF-pelvis.R' in ob.data.bones :
         #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
-
-        #if 'DEF-breast.L' in ob.data.bones :
-        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
-        #if 'DEF-breast.R' in ob.data.bones :
-        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -177,12 +201,12 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         self.report({'INFO'}, 'Godot ready rig!')
 
         # Set armature viewport display to 'In Front'
-        # ob.show_in_front = True
+        ob.show_in_front = True
 
         # Set armature display mode to 'Wire'
         # ob.display_type = 'WIRE'
 
-        ob.name = "godot_rig"
+
 
         return{'FINISHED'}
 
