@@ -61,9 +61,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         if 'DEF-breast.L' in ob.data.bones :
-            ob.data.bones['DEF-breast.L'].use_deform = False
+            ob.data.bones['DEF-breast.L'].use_deform = True
         if 'DEF-breast.R' in ob.data.bones :
-            ob.data.bones['DEF-breast.R'].use_deform = False
+            ob.data.bones['DEF-breast.R'].use_deform = True
 
         if 'DEF-pelvis.L' in ob.data.bones :
             ob.data.bones['DEF-pelvis.L'].use_deform = False
