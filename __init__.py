@@ -141,6 +141,16 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             constraint.target = bpy.data.objects["godot_rig"]
             constraint.subtarget = "breast.L"
 
+        if "DEF-shoulder.R" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-shoulder.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "shoulder.R"
+
+        if "DEF-shoulder.L" in ob.data.edit_bones :
+            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-shoulder.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["godot_rig"]
+            constraint.subtarget = "shoulder.L"
+
         if "DEF-jaw" in ob.data.edit_bones :
             constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-jaw"].constraints.new('COPY_TRANSFORMS')
             constraint.target = bpy.data.objects["godot_rig"]
