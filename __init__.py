@@ -35,6 +35,7 @@ def check_and_remove(bone_name) :
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
+
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
@@ -57,6 +58,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
     def execute(self, context):
         ob = bpy.context.object
+        
         
         bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -206,7 +208,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         #for edit_bone in ob.data.edit_bones:
         #    if edit_bone.name.startswith("DEF-"):
         #        edit_bone.name = edit_bone.name[len("DEF-"):]
-
+        
+        bpy.ops.object.posemode_toggle()
+        # Set IK_Stretch property to 0 for specified bones
+        armature = bpy.context.object
+        armature.pose.bones["upper_arm_parent.L"]["IK_Stretch"] = 0.0
+        armature.pose.bones["upper_arm_parent.R"]["IK_Stretch"] = 0.0
+        armature.pose.bones["thigh_parent.L"]["IK_Stretch"] = 0.0
+        armature.pose.bones["thigh_parent.R"]["IK_Stretch"] = 0.0
+        
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
 
@@ -215,7 +225,6 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         # Set armature display mode to 'Wire'
         # ob.display_type = 'WIRE'
-
 
 
         return{'FINISHED'}
