@@ -1,0 +1,38 @@
+[gd_resource type="BoneMap" load_steps=2 format=3 uid="uid://0np2r4e73wyg"]
+
+[ext_resource type="SkeletonProfile" uid="uid://731vr2adojpw" path="res://quadruped_profile.tres" id="1_yuch2"]
+
+[resource]
+profile = ExtResource("1_yuch2")
+bonemap = null
+bone_map/root = &"root"
+bone_map/DEF-hips = &"DEF-hips"
+bone_map/DEF-spine.001 = &"DEF-spine.001"
+bone_map/DEF-spine.002 = &"DEF-spine.002"
+bone_map/DEF-spine.003 = &"DEF-spine.003"
+bone_map/DEF-neck = &"DEF-neck"
+bone_map/DEF-head = &"DEF-head"
+bone_map/DEF-jaw = &"DEF-jaw"
+bone_map/DEF-ear.L = &"DEF-ear.L"
+bone_map/DEF-ear.R = &"DEF-ear.R"
+bone_map/DEF-shoulder.L = &"DEF-shoulder.L"
+bone_map/DEF-front_thigh.L = &"DEF-front_thigh.L"
+bone_map/DEF-front_shin.L = &"DEF-front_shin.L"
+bone_map/DEF-front_foot.L = &"DEF-front_foot.L"
+bone_map/DEF-front_toe.L = &"DEF-front_toe.L"
+bone_map/DEF-shoulder.R = &"DEF-shoulder.R"
+bone_map/DEF-front_thigh.R = &"DEF-front_thigh.R"
+bone_map/DEF-front_shin.R = &"DEF-front_shin.R"
+bone_map/DEF-front_foot.R = &"DEF-front_foot.R"
+bone_map/DEF-front_toe.R = &"DEF-front_toe.R"
+bone_map/DEF-thigh.L = &"DEF-thigh.L"
+bone_map/DEF-shin.L = &"DEF-shin.L"
+bone_map/DEF-foot.L = &"DEF-foot.L"
+bone_map/DEF-toe.L = &"DEF-toe.L"
+bone_map/DEF-thigh.R = &"DEF-thigh.R"
+bone_map/DEF-shin.R = &"DEF-shin.R"
+bone_map/DEF-foot.R = &"DEF-foot.R"
+bone_map/DEF-toe.R = &"DEF-toe.R"
+bone_map/DEF-tail.002 = &"DEF-tail.002"
+bone_map/DEF-tail = &"DEF-tail"
+bone_map/DEF-tail.001 = &"DEF-tail.001"
