@@ -35,7 +35,6 @@ def check_and_remove(bone_name) :
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
-
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
@@ -59,18 +58,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
     def execute(self, context):
         ob = bpy.context.object
         
-        is_animal = context.object.type == 'ARMATURE' and "DEF-spine.006" in bpy.context.object.data.bones
+        is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
         
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
         if is_animal : # the root bone is spine.005
-            if 'root' in ob.data.bones :
-                ob.data.bones['root'].use_deform = True
-        else: # the root bone is just the hips at spine
-            if 'root' in ob.data.bones :
-                ob.data.bones['root'].use_deform = True
-
+            print('is animal')
+        if 'root' in ob.data.bones :
+            ob.data.bones['root'].use_deform = True
         if 'DEF-breast.L' in ob.data.bones :
             ob.data.bones['DEF-breast.L'].use_deform = True
         if 'DEF-breast.R' in ob.data.bones :
@@ -81,82 +77,97 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         if 'DEF-pelvis.R' in ob.data.bones :
             ob.data.bones['DEF-pelvis.R'].use_deform = False
 
+
+
         bpy.ops.object.mode_set(mode='EDIT')
-        
-        if is_animal:
-            check_and_parent('DEF-tail','DEF-spine.004')
-            check_and_parent('DEF-front_thigh.L','DEF-front_thigh.L.001',True)
-            check_and_parent('DEF-front_shin.L','DEF-front_shin.L.001',True)
-            check_and_parent('DEF-front_shin.L','DEF-front_thigh.L.001')
-            check_and_remove('DEF-front_thigh.L.001')
-            check_and_remove('DEF-front_shin.L.001')
 
-            check_and_parent('DEF-front_foot.L','DEF-front_shin.L')
-            check_and_parent('DEF-front_toe.L','DEF-front_foot.L')
-            check_and_remove('DEF-front_foot.L.001')
+        #if is_animal:
+            #check_and_parent('DEF-tail','DEF-spine.004')
+            #check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
+            #check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
+            #check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
+            #check_and_remove('DEF-upper_arm.L.001')
+            #check_and_remove('DEF-forearm.L.001')
 
-            check_and_parent('DEF-front_thigh.R','DEF-front_thigh.R.001',True)
-            check_and_parent('DEF-front_shin.R','DEF-front_shin.R.001',True)
-            check_and_parent('DEF-front_shin.R','DEF-front_thigh.R.001')
-            check_and_remove('DEF-front_thigh.R.001')
-            check_and_remove('DEF-front_shin.R.001')
+            #check_and_parent('DEF-forefoot.L','DEF-forearm.L')
+            #check_and_parent('DEF-f_toe.L','DEF-forefoot.L')
+            #check_and_parent('DEF-f_hoof.L','DEF-f_toe.L')
+            #check_and_remove('DEF-forefoot.L.001')
 
-            check_and_parent('DEF-front_foot.R','DEF-front_shin.R')
-            check_and_parent('DEF-front_toe.R','DEF-front_foot.R')
-            check_and_remove('DEF-front_foot.R.001')
+            #check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
+            #check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
+            #check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
+            #check_and_remove('DEF-upper_arm.R.001')
+            #check_and_remove('DEF-forearm.R.001')
 
-            check_and_parent('DEF-shoulder.L','DEF-spine.007')
-            check_and_parent('DEF-shoulder.R','DEF-spine.007')
-            check_and_parent('DEF-front_thigh.L','DEF-shoulder.L')
-            check_and_parent('DEF-front_thigh.R','DEF-shoulder.R')
-            check_and_parent('DEF-thigh.L','DEF-spine.004')
-            check_and_parent('DEF-thigh.R','DEF-spine.004')
-            check_and_parent('DEF-jaw','DEF-spine.009')
-            check_and_parent('DEF-eye.L','DEF-spine.009')
-            check_and_parent('DEF-eye.R','DEF-spine.009')
+            #check_and_parent('DEF-forefoot.R','DEF-forearm.R')
+            #check_and_parent('DEF-f_toe.R','DEF-forefoot.R')
+            #check_and_parent('DEF-f_hoof.R','DEF-f_toe.R')
+            #check_and_remove('DEF-forefoot.R.001')
 
-        else:
-            check_and_parent('DEF-shoulder.L','DEF-spine.003')
-            check_and_parent('DEF-shoulder.R','DEF-spine.003')
-            check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
-            check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
-            check_and_parent('DEF-thigh.L','DEF-spine')
-            check_and_parent('DEF-thigh.R','DEF-spine')
-            check_and_parent('DEF-jaw','DEF-spine.005')
-            check_and_parent('DEF-eye.L','DEF-spine.005')
-            check_and_parent('DEF-eye.R','DEF-spine.005')
+            #check_and_parent('DEF-shoulder.L','DEF-spine.007')
+            #check_and_parent('DEF-shoulder.R','DEF-spine.007')
+            #check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
+            #check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
+            #check_and_parent('DEF-thigh.L','DEF-spine.004')
+            #check_and_parent('DEF-thigh.R','DEF-spine.004')
+            #check_and_parent('DEF-jaw','DEF-spine.009')
+            #check_and_parent('DEF-eye.L','DEF-spine.009')
+            #check_and_parent('DEF-eye.R','DEF-spine.009')
 
-            check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
-            check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
-            check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
-            check_and_remove('DEF-upper_arm.L.001')
-            check_and_remove('DEF-forearm.L.001')
 
-            check_and_parent('DEF-hand.L','DEF-forearm.L')
-            check_and_parent('DEF-thumb.01.L','DEF-hand.L')
-            check_and_parent('DEF-f_index.01.L','DEF-hand.L')
-            check_and_parent('DEF-f_middle.01.L','DEF-hand.L')
-            check_and_parent('DEF-f_ring.01.L','DEF-hand.L')
-            check_and_parent('DEF-f_pinky.01.L','DEF-hand.L')
+        #else:
+        check_and_parent('DEF-shoulder.L','DEF-spine.003')
+        check_and_parent('DEF-shoulder.R','DEF-spine.003')
+        check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
+        check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
+        check_and_parent('DEF-thigh.L','DEF-spine')
+        check_and_parent('DEF-thigh.R','DEF-spine')
+        check_and_parent('DEF-jaw','DEF-spine.005')
+        check_and_parent('DEF-eye.L','DEF-spine.005')
+        check_and_parent('DEF-eye.R','DEF-spine.005')
 
-            check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
-            check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
-            check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
-            check_and_remove('DEF-upper_arm.R.001')
-            check_and_remove('DEF-forearm.R.001')
+        check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
+        check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
+        check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
+        check_and_remove('DEF-upper_arm.L.001')
+        check_and_remove('DEF-forearm.L.001')
 
-            check_and_parent('DEF-hand.R','DEF-forearm.R')
-            check_and_parent('DEF-thumb.01.R','DEF-hand.R')
-            check_and_parent('DEF-f_index.01.R','DEF-hand.R')
-            check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
-            check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
-            check_and_parent('DEF-f_pinky.01.R','DEF-hand.R')
+        check_and_parent('DEF-carpal.L','DEF-forearm.L')
+        check_and_parent('DEF-paws.L','DEF-carpal.L')
+        check_and_parent('DEF-hand.L','DEF-forearm.L')
+        check_and_parent('DEF-thumb.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_index.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_middle.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_ring.01.L','DEF-hand.L')
+        check_and_parent('DEF-f_pinky.01.L','DEF-hand.L')
+
+        check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
+        check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
+        check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
+        check_and_remove('DEF-upper_arm.R.001')
+        check_and_remove('DEF-forearm.R.001')
+
+        check_and_parent('DEF-carpal.R','DEF-forearm.L')
+        check_and_parent('DEF-paws.L','DEF-carpal.L')
+        check_and_parent('DEF-hand.R','DEF-forearm.R')
+        check_and_parent('DEF-thumb.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_index.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
+        check_and_parent('DEF-f_pinky.01.R','DEF-hand.R')
 
         # common bones
         check_and_parent('DEF-thigh.L','DEF-thigh.L.001',True)
         check_and_parent('DEF-shin.L','DEF-shin.L.001',True)
         check_and_parent('DEF-shin.L','DEF-thigh.L.001')
         check_and_parent('DEF-foot.L','DEF-shin.L.001')
+
+        check_and_parent('DEF-tarsal.L','DEF-shin.L.001')
+        check_and_parent('DEF-toe.L','DEF-tarsal.L')
+        check_and_remove('DEF-tarsal.L.001')
+        check_and_remove('DEF-carpal.L.001')
+
         check_and_remove('DEF-thigh.L.001')
         check_and_remove('DEF-shin.L.001')
         check_and_remove('DEF-foot.L.001')
@@ -165,12 +176,19 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-shin.R','DEF-shin.R.001',True)
         check_and_parent('DEF-shin.R','DEF-thigh.R.001')
         check_and_parent('DEF-foot.R','DEF-shin.R.001')
+
+        check_and_parent('DEF-tarsal.R','DEF-shin.R.001')
+        check_and_parent('DEF-toe.R','DEF-tarsal.R')
+        check_and_remove('DEF-tarsal.R.001')
+        check_and_remove('DEF-carpal.R.001')
+
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
         check_and_remove('DEF-foot.R.001')
 
         check_and_parent('DEF-breast.L','DEF-spine.003')
         check_and_parent('DEF-breast.R','DEF-spine.003')
+        check_and_parent('DEF-tail','DEF-spine')
 
         ob.name = "godot_rig"
 
@@ -216,12 +234,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         # fix a few names quick
         if is_animal:
             namelist = [
-                ("DEF-spine.004", "DEF-hips"),
-                ("DEF-spine.008","DEF-neck"),
-                ("DEF-spine.009", "DEF-head"),
-                ("DEF-spine.007", "DEF-spine.003"),
-                ("DEF-spine.006", "DEF-spine.002"),
-                ("DEF-spine.005", "DEF-spine.001"),
+                ("DEF-spine", "DEF-hips"),
+                ("DEF-spine.004","DEF-neck"),
+                ("DEF-spine.005", "DEF-head"),
+                ("DEF-paws.L", "DEF-hand.L"),
+                ("DEF-toe.L", "DEF-foot.L"),
+                ("DEF-paws.R", "DEF-hand.R"),
+                ("DEF-toe.R", "DEF-foot.R"),
+                #("DEF-spine.006", "DEF-spine.002"),
+                #("DEF-spine.005", "DEF-spine.001"),
                 ("DEF-eye.L", "DEF-ear.L"),
                 ("DEF-eye.R", "DEF-ear.R"),
                 ("eye.L", "ear.L"),
@@ -277,8 +298,6 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             bones_to_check = [
                 "upper_arm_parent.L",
                 "upper_arm_parent.R",
-                "front_thigh_parent.L",
-                "front_thigh_parent.R",
                 "thigh_parent.L",
                 "thigh_parent.R"
             ]
