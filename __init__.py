@@ -90,8 +90,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             #check_and_remove('DEF-forearm.L.001')
 
             #check_and_parent('DEF-forefoot.L','DEF-forearm.L')
-            #check_and_parent('DEF-f_toe.L','DEF-forefoot.L')
-            #check_and_parent('DEF-f_hoof.L','DEF-f_toe.L')
+            #check_and_parent('DEF-f_toes.L','DEF-forefoot.L')
+            #check_and_parent('DEF-f_hoof.L','DEF-f_toes.L')
             #check_and_remove('DEF-forefoot.L.001')
 
             #check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
@@ -101,8 +101,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             #check_and_remove('DEF-forearm.R.001')
 
             #check_and_parent('DEF-forefoot.R','DEF-forearm.R')
-            #check_and_parent('DEF-f_toe.R','DEF-forefoot.R')
-            #check_and_parent('DEF-f_hoof.R','DEF-f_toe.R')
+            #check_and_parent('DEF-f_toes.R','DEF-forefoot.R')
+            #check_and_parent('DEF-f_hoof.R','DEF-f_toes.R')
             #check_and_remove('DEF-forefoot.R.001')
 
             #check_and_parent('DEF-shoulder.L','DEF-spine.007')
@@ -133,8 +133,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-upper_arm.L.001')
         check_and_remove('DEF-forearm.L.001')
 
-        check_and_parent('DEF-carpal.L','DEF-forearm.L')
-        check_and_parent('DEF-paws.L','DEF-carpal.L')
+        check_and_parent('DEF-hands.L','DEF-hands.L.001',True)
+        check_and_parent('DEF-hands.L','DEF-forearm.L.001')
+        check_and_parent('DEF-fingers.L','DEF-hands.L.001')
         check_and_parent('DEF-hand.L','DEF-forearm.L')
         check_and_parent('DEF-thumb.01.L','DEF-hand.L')
         check_and_parent('DEF-f_index.01.L','DEF-hand.L')
@@ -148,8 +149,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-upper_arm.R.001')
         check_and_remove('DEF-forearm.R.001')
 
-        check_and_parent('DEF-carpal.R','DEF-forearm.L')
-        check_and_parent('DEF-paws.L','DEF-carpal.L')
+        check_and_parent('DEF-hands.R','DEF-hands.R.001',True)
+        check_and_parent('DEF-hands.R','DEF-forearm.R.001')
+        check_and_parent('DEF-fingers.R','DEF-hands.R.001')
         check_and_parent('DEF-hand.R','DEF-forearm.R')
         check_and_parent('DEF-thumb.01.R','DEF-hand.R')
         check_and_parent('DEF-f_index.01.R','DEF-hand.R')
@@ -163,10 +165,12 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-shin.L','DEF-thigh.L.001')
         check_and_parent('DEF-foot.L','DEF-shin.L.001')
 
-        check_and_parent('DEF-tarsal.L','DEF-shin.L.001')
-        check_and_parent('DEF-toe.L','DEF-tarsal.L')
-        check_and_remove('DEF-tarsal.L.001')
-        check_and_remove('DEF-carpal.L.001')
+        check_and_parent('DEF-feet.L','DEF-feet.L.001',True)
+        check_and_parent('DEF-feet.L','DEF-shin.L.001')
+        check_and_parent('DEF-toes.L','DEF-feet.L.001')
+        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_remove('DEF-feet.L.001')
+        check_and_remove('DEF-hands.L.001')
 
         check_and_remove('DEF-thigh.L.001')
         check_and_remove('DEF-shin.L.001')
@@ -177,10 +181,12 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-shin.R','DEF-thigh.R.001')
         check_and_parent('DEF-foot.R','DEF-shin.R.001')
 
-        check_and_parent('DEF-tarsal.R','DEF-shin.R.001')
-        check_and_parent('DEF-toe.R','DEF-tarsal.R')
-        check_and_remove('DEF-tarsal.R.001')
-        check_and_remove('DEF-carpal.R.001')
+        check_and_parent('DEF-feet.R','DEF-feet.R.001',True)
+        check_and_parent('DEF-feet.R','DEF-shin.R.001')
+        check_and_parent('DEF-toes.R','DEF-feet.R.001')
+        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_remove('DEF-feet.R.001')
+        check_and_remove('DEF-hands.R.001')
 
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
@@ -237,10 +243,6 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
                 ("DEF-spine", "DEF-hips"),
                 ("DEF-spine.004","DEF-neck"),
                 ("DEF-spine.005", "DEF-head"),
-                ("DEF-paws.L", "DEF-hand.L"),
-                ("DEF-toe.L", "DEF-foot.L"),
-                ("DEF-paws.R", "DEF-hand.R"),
-                ("DEF-toe.R", "DEF-foot.R"),
                 #("DEF-spine.006", "DEF-spine.002"),
                 #("DEF-spine.005", "DEF-spine.001"),
                 ("DEF-eye.L", "DEF-ear.L"),
@@ -300,6 +302,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
                 "upper_arm_parent.R",
                 "thigh_parent.L",
                 "thigh_parent.R"
+
             ]
 
         for bone_name in bones_to_check:
