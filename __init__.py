@@ -35,7 +35,6 @@ def check_and_remove(bone_name) :
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
-
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
@@ -44,7 +43,7 @@ class GodotMecanim_Panel(bpy.types.Panel):
 
     @classmethod
     def poll(self, context):
-        return context.object.type == 'ARMATURE' and "DEF-upper_arm.L.001" in bpy.context.object.data.bones
+        return context.object.type == 'ARMATURE' and "DEF-spine.005" in bpy.context.object.data.bones
     
     def draw(self, context):
         self.layout.operator("rig4mec.convert2godot")
@@ -59,9 +58,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
     def execute(self, context):
         ob = bpy.context.object
         
+        is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
         
+
         bpy.ops.object.mode_set(mode='OBJECT')
 
+        if is_animal : # the root bone is spine.005
+            print('is animal')
+        if 'root' in ob.data.bones :
+            ob.data.bones['root'].use_deform = True
         if 'DEF-breast.L' in ob.data.bones :
             ob.data.bones['DEF-breast.L'].use_deform = True
         if 'DEF-breast.R' in ob.data.bones :
@@ -72,8 +77,46 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         if 'DEF-pelvis.R' in ob.data.bones :
             ob.data.bones['DEF-pelvis.R'].use_deform = False
 
+
+
         bpy.ops.object.mode_set(mode='EDIT')
-        
+
+        #if is_animal:
+            #check_and_parent('DEF-tail','DEF-spine.004')
+            #check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
+            #check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
+            #check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
+            #check_and_remove('DEF-upper_arm.L.001')
+            #check_and_remove('DEF-forearm.L.001')
+
+            #check_and_parent('DEF-forefoot.L','DEF-forearm.L')
+            #check_and_parent('DEF-f_toes.L','DEF-forefoot.L')
+            #check_and_parent('DEF-f_hoof.L','DEF-f_toes.L')
+            #check_and_remove('DEF-forefoot.L.001')
+
+            #check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
+            #check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
+            #check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
+            #check_and_remove('DEF-upper_arm.R.001')
+            #check_and_remove('DEF-forearm.R.001')
+
+            #check_and_parent('DEF-forefoot.R','DEF-forearm.R')
+            #check_and_parent('DEF-f_toes.R','DEF-forefoot.R')
+            #check_and_parent('DEF-f_hoof.R','DEF-f_toes.R')
+            #check_and_remove('DEF-forefoot.R.001')
+
+            #check_and_parent('DEF-shoulder.L','DEF-spine.007')
+            #check_and_parent('DEF-shoulder.R','DEF-spine.007')
+            #check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
+            #check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
+            #check_and_parent('DEF-thigh.L','DEF-spine.004')
+            #check_and_parent('DEF-thigh.R','DEF-spine.004')
+            #check_and_parent('DEF-jaw','DEF-spine.009')
+            #check_and_parent('DEF-eye.L','DEF-spine.009')
+            #check_and_parent('DEF-eye.R','DEF-spine.009')
+
+
+        #else:
         check_and_parent('DEF-shoulder.L','DEF-spine.003')
         check_and_parent('DEF-shoulder.R','DEF-spine.003')
         check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
@@ -84,13 +127,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-eye.L','DEF-spine.005')
         check_and_parent('DEF-eye.R','DEF-spine.005')
 
-
         check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
         check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
         check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
         check_and_remove('DEF-upper_arm.L.001')
         check_and_remove('DEF-forearm.L.001')
 
+        check_and_parent('DEF-hands.L','DEF-hands.L.001',True)
+        check_and_parent('DEF-hands.L','DEF-forearm.L.001')
+        check_and_parent('DEF-fingers.L','DEF-hands.L.001')
         check_and_parent('DEF-hand.L','DEF-forearm.L')
         check_and_parent('DEF-thumb.01.L','DEF-hand.L')
         check_and_parent('DEF-f_index.01.L','DEF-hand.L')
@@ -104,7 +149,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-upper_arm.R.001')
         check_and_remove('DEF-forearm.R.001')
 
-
+        check_and_parent('DEF-hands.R','DEF-hands.R.001',True)
+        check_and_parent('DEF-hands.R','DEF-forearm.R.001')
+        check_and_parent('DEF-fingers.R','DEF-hands.R.001')
         check_and_parent('DEF-hand.R','DEF-forearm.R')
         check_and_parent('DEF-thumb.01.R','DEF-hand.R')
         check_and_parent('DEF-f_index.01.R','DEF-hand.R')
@@ -112,23 +159,42 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
         check_and_parent('DEF-f_pinky.01.R','DEF-hand.R')
 
+        # common bones
         check_and_parent('DEF-thigh.L','DEF-thigh.L.001',True)
         check_and_parent('DEF-shin.L','DEF-shin.L.001',True)
         check_and_parent('DEF-shin.L','DEF-thigh.L.001')
         check_and_parent('DEF-foot.L','DEF-shin.L.001')
+
+        check_and_parent('DEF-feet.L','DEF-feet.L.001',True)
+        check_and_parent('DEF-feet.L','DEF-shin.L.001')
+        check_and_parent('DEF-toes.L','DEF-feet.L.001')
+        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_remove('DEF-feet.L.001')
+        check_and_remove('DEF-hands.L.001')
+
         check_and_remove('DEF-thigh.L.001')
         check_and_remove('DEF-shin.L.001')
+        check_and_remove('DEF-foot.L.001')
 
-
-        check_and_parent('DEF-thigh.R','DEF-thigh.LR.001',True)
+        check_and_parent('DEF-thigh.R','DEF-thigh.R.001',True)
         check_and_parent('DEF-shin.R','DEF-shin.R.001',True)
         check_and_parent('DEF-shin.R','DEF-thigh.R.001')
         check_and_parent('DEF-foot.R','DEF-shin.R.001')
+
+        check_and_parent('DEF-feet.R','DEF-feet.R.001',True)
+        check_and_parent('DEF-feet.R','DEF-shin.R.001')
+        check_and_parent('DEF-toes.R','DEF-feet.R.001')
+        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_remove('DEF-feet.R.001')
+        check_and_remove('DEF-hands.R.001')
+
         check_and_remove('DEF-thigh.R.001')
         check_and_remove('DEF-shin.R.001')
+        check_and_remove('DEF-foot.R.001')
 
         check_and_parent('DEF-breast.L','DEF-spine.003')
         check_and_parent('DEF-breast.R','DEF-spine.003')
+        check_and_parent('DEF-tail','DEF-spine')
 
         ob.name = "godot_rig"
 
@@ -169,15 +235,28 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             constraint.subtarget = "eye.R"
 
 
-        #if 'DEF-pelvis.L' in ob.data.bones :
-        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
-        #if 'DEF-pelvis.R' in ob.data.bones :
-        #    ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
-
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # fix a few names quick
-        namelist = [("DEF-spine", "DEF-hips"),("DEF-spine.004","DEF-neck"),("DEF-spine.005", "DEF-head")]
+        if is_animal:
+            namelist = [
+                ("DEF-spine", "DEF-hips"),
+                ("DEF-spine.004","DEF-neck"),
+                ("DEF-spine.005", "DEF-head"),
+                #("DEF-spine.006", "DEF-spine.002"),
+                #("DEF-spine.005", "DEF-spine.001"),
+                ("DEF-eye.L", "DEF-ear.L"),
+                ("DEF-eye.R", "DEF-ear.R"),
+                ("eye.L", "ear.L"),
+                ("eye.R", "ear.R")
+                ]
+
+        else:
+            namelist = [
+                ("DEF-spine", "DEF-hips"),
+                ("DEF-spine.004","DEF-neck"),
+                ("DEF-spine.005", "DEF-head")
+                ]
 
         for name, newname in namelist:
             # get the pose bone with name
@@ -188,34 +267,47 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             # rename
             pb.name = newname
 
-        # hide all the extra unused controls
-        bpy.context.object.data.collections["Torso (Tweak)"].is_visible = False
-        bpy.context.object.data.collections["Fingers (Detail)"].is_visible = False
-        bpy.context.object.data.collections["Torso (Tweak)"].is_visible = False
-        bpy.context.object.data.collections["Fingers (Detail)"].is_visible = False
-        bpy.context.object.data.collections["Arm.R (Tweak)"].is_visible = False
-        bpy.context.object.data.collections["Arm.L (Tweak)"].is_visible = False
-        bpy.context.object.data.collections["Arm.L (FK)"].is_visible = False
-        bpy.context.object.data.collections["Arm.R (FK)"].is_visible = False
-        bpy.context.object.data.collections["Leg.L (Tweak)"].is_visible = False
-        bpy.context.object.data.collections["Leg.L (FK)"].is_visible = False
-        bpy.context.object.data.collections["Leg.R (FK)"].is_visible = False
-        bpy.context.object.data.collections["Leg.R (Tweak)"].is_visible = False
+        # hide all the uncommonly used controls
 
-        # Remove "DEF-" from every deform bone name
-        #bpy.ops.object.mode_set(mode='EDIT')
+        collections_to_hide = [
+            "Torso (Tweak)",
+            "Fingers (Detail)",
+            "Torso (Tweak)",
+            "Fingers (Detail)",
+            "Arm.R (Tweak)",
+            "Arm.L (Tweak)",
+            "Arm.L (FK)",
+            "Arm.R (FK)",
+            "Leg.L (Tweak)",
+            "Leg.L (FK)",
+            "Leg.R (FK)",
+            "Leg.R (Tweak)",
+            "Spine (Tweak)"
+        ]
 
-        #for edit_bone in ob.data.edit_bones:
-        #    if edit_bone.name.startswith("DEF-"):
-        #        edit_bone.name = edit_bone.name[len("DEF-"):]
+        for collection_name in collections_to_hide:
+            if collection_name in bpy.context.object.data.collections:
+                bpy.context.object.data.collections[collection_name].is_visible = False
+            else:
+                print(f"Collection '{collection_name}' not found.")
+
         
         bpy.ops.object.posemode_toggle()
         # Set IK_Stretch property to 0 for specified bones
-        armature = bpy.context.object
-        armature.pose.bones["upper_arm_parent.L"]["IK_Stretch"] = 0.0
-        armature.pose.bones["upper_arm_parent.R"]["IK_Stretch"] = 0.0
-        armature.pose.bones["thigh_parent.L"]["IK_Stretch"] = 0.0
-        armature.pose.bones["thigh_parent.R"]["IK_Stretch"] = 0.0
+        armature = bpy.context.object\
+
+        if armature.type == 'ARMATURE':
+            bones_to_check = [
+                "upper_arm_parent.L",
+                "upper_arm_parent.R",
+                "thigh_parent.L",
+                "thigh_parent.R"
+
+            ]
+
+        for bone_name in bones_to_check:
+            if bone_name in armature.pose.bones:
+                armature.pose.bones[bone_name]["IK_Stretch"] = 0.0
         
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
