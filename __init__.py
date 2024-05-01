@@ -43,23 +43,23 @@ class GodotMecanim_Panel(bpy.types.Panel):
 
     @classmethod
     def poll(self, context):
-        return context.object.type == 'ARMATURE' and "DEF-spine.005" in bpy.context.object.data.bones
-    
+        return context.object and context.object.type == 'ARMATURE' and "DEF-spine.005" in bpy.context.object.data.bones
+
     def draw(self, context):
         self.layout.operator("rig4mec.convert2godot")
-        
-        
+
+
 class GodotMecanim_Convert2Godot(bpy.types.Operator):
     bl_idname = "rig4mec.convert2godot"
     bl_label = "Prepare rig for Godot"
-    
+
 
 
     def execute(self, context):
         ob = bpy.context.object
-        
+
         is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
-        
+
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -291,7 +291,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             else:
                 print(f"Collection '{collection_name}' not found.")
 
-        
+
         bpy.ops.object.posemode_toggle()
         # Set IK_Stretch property to 0 for specified bones
         armature = bpy.context.object\
@@ -308,7 +308,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         for bone_name in bones_to_check:
             if bone_name in armature.pose.bones:
                 armature.pose.bones[bone_name]["IK_Stretch"] = 0.0
-        
+
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
 
@@ -326,7 +326,7 @@ def register():
     bpy.utils.register_class(GodotMecanim_Panel)
     bpy.utils.register_class(GodotMecanim_Convert2Godot)
 
-    
+
 def unregister():
     #classes
     bpy.utils.unregister_class(GodotMecanim_Panel)
