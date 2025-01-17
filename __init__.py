@@ -267,6 +267,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             # rename
             pb.name = newname
 
+            reparent_bones_to_metarig_parents()
+
         # hide all the uncommonly used controls
 
         collections_to_hide = [
@@ -318,8 +320,63 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         # Set armature display mode to 'Wire'
         # ob.display_type = 'WIRE'
 
-
         return{'FINISHED'}
+
+def reparent_bones_to_metarig_parents():
+    # Ensure we harve the active armature and the 'metarig' armature
+    godot_rig = bpy.data.objects.get('godot_rig')
+    metarig_armature = bpy.data.objects.get('metarig')
+    # Ensure we have the active armature and the 'metarig' armature
+
+    # Check if the active object is an armature and 'metarig' exists
+    if godot_rig is None or godot_rig.type != 'ARMATURE':
+        print("Error: The active object is not an armature.")
+        return
+
+    if metarig_armature is None or metarig_armature.type != 'ARMATURE':
+        print("Error: 'metarig' armature not found.")
+        return
+    # EDIT MODE IN GODOT RIG
+    bpy.ops.object.mode_set(mode='EDIT')
+    # Loop through each bone in the active armature
+    print("START BONE LOOP")
+    for bone in godot_rig.data.edit_bones:
+        # Check if the parent bone name starts with "ORG-" this means is a extra bone
+        if bone.parent:
+            if bone.parent.name.startswith("ORG-"):
+                # Check if the bone name starts with "DEF-" in the active armature
+                if bone.name.startswith("DEF-"):
+                    # Remove the 'DEF-' prefix to match the corresponding bone name in the 'metarig'
+                    active_bone_name = bone.name[4:]
+
+                    # Try to get the corresponding bone from the 'metarig'
+                    if active_bone_name in metarig_armature.data.bones:
+                        print(f"Bone {active_bone_name} found in 'metarig'.")
+                        metarig_bone_name = active_bone_name
+                        metarig_bone = metarig_armature.data.bones[metarig_bone_name]
+
+                        # Check the parent of the bone in the 'metarig'
+                        if metarig_bone.parent:
+                            parent_bone_name = metarig_bone.parent.name
+                            #Fix diferent bone names between rigs
+                            if parent_bone_name == "spine.005":
+                                parent_bone_name = "head"
+                            if parent_bone_name == "spine.004":
+                                parent_bone_name = "neck"
+                            if parent_bone_name == "spine":
+                                parent_bone_name = "hips"
+                            print(f"PARENT OF {active_bone_name} = {parent_bone_name}.")
+                            parent_bone_name = "DEF-" + parent_bone_name
+                            # Set the parent of the active armature's bone to match the 'metarig' bone's parent
+                            if parent_bone_name in godot_rig.data.bones:
+                                active_bone = godot_rig.data.bones[bone.name]
+                                parent_bone = godot_rig.data.edit_bones[parent_bone_name]
+                                bone.parent = parent_bone
+                                print(f"Reparented {bone.name} to {parent_bone_name}")
+                                # Constraint the bone to its controller
+                                constraint = bpy.data.objects["godot_rig"].pose.bones[bone.name].constraints.new('COPY_TRANSFORMS')
+                                constraint.target = bpy.data.objects["godot_rig"]
+                                constraint.subtarget = bone.name[4:]
 
 def register():
     #classes
