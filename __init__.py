@@ -267,7 +267,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             # rename
             pb.name = newname
 
-            reparent_bones_to_metarig_parents()
+        reparent_bones_to_metarig_parents()
 
         # hide all the uncommonly used controls
 
