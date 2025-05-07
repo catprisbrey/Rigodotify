@@ -36,28 +36,30 @@ def check_and_remove(bone_name) :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
 def remove_all_drivers_and_stretch_constraints(armature_obj):
-    # Remove all drivers from the armature
+    # Remove drivers only for DEF bones
     if armature_obj.animation_data:
-        for fcurve in armature_obj.animation_data.drivers:
-            armature_obj.animation_data.drivers.remove(fcurve)
+        for fcurve in list(armature_obj.animation_data.drivers):
+            if 'pose.bones["DEF-' in fcurve.data_path:
+                armature_obj.animation_data.drivers.remove(fcurve)
 
     for bone in armature_obj.pose.bones:
-        # Remove "Stretch To" constraints
-        stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
-        for c in stretch_constraints:
-            bone.constraints.remove(c)
-
-        # Replace "Copy Transforms" with "Copy Rotation" for DEF bones
+        # Skip hips
         if bone.name.startswith("DEF-"):
-            copy_transform_constraints = [c for c in bone.constraints if c.type == 'COPY_TRANSFORMS']
-            for ct in copy_transform_constraints:
-                # Add Copy Rotation using the same target and subtarget
-                new_constraint = bone.constraints.new('COPY_ROTATION')
-                new_constraint.target = ct.target
-                new_constraint.subtarget = ct.subtarget
-                bone.constraints.remove(ct)
+            # Remove "Stretch To" constraints
+            stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
+            for c in stretch_constraints:
+                bone.constraints.remove(c)
 
-            # Add Limit Scale constraint locking scale to 1.0 on all axes
+            if bone.name != "DEF-hips":
+                # Replace "Copy Transforms" with "Copy Rotation"
+                copy_transform_constraints = [c for c in bone.constraints if c.type == 'COPY_TRANSFORMS']
+                for ct in copy_transform_constraints:
+                    new_constraint = bone.constraints.new('COPY_ROTATION')
+                    new_constraint.target = ct.target
+                    new_constraint.subtarget = ct.subtarget
+                    bone.constraints.remove(ct)
+
+            # Add Limit Scale constraint
             limit_scale = bone.constraints.new('LIMIT_SCALE')
             limit_scale.use_min_x = True
             limit_scale.use_min_y = True
@@ -72,10 +74,12 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
             limit_scale.max_y = 1.0
             limit_scale.max_z = 1.0
 
-            # Apply additional settings for "DEF-thigh" bones
-            if "thigh" in bone.name.lower() or "shin" in bone.name.lower():  # Checking if it's a "DEF-thigh" bone
+            # Special case: thigh or shin
+            if "thigh" in bone.name.lower() or "shin" in bone.name.lower():
                 limit_scale.use_transform_limit = True
                 limit_scale.owner_space = 'LOCAL'
+
+
 
 
 
