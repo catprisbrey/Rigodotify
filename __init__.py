@@ -41,11 +41,28 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
         for fcurve in list(armature_obj.animation_data.drivers):
             armature_obj.driver_remove(fcurve.data_path, fcurve.array_index)
 
-    # Remove "Stretch To" constraints from pose bones
     for bone in armature_obj.pose.bones:
-        constraints_to_remove = [c for c in bone.constraints if c.type == 'STRETCH_TO']
-        for c in constraints_to_remove:
+        # Remove "Stretch To" constraints
+        stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
+        for c in stretch_constraints:
             bone.constraints.remove(c)
+
+        # Replace COPY_TRANSFORMS with COPY_ROTATION for DEF bones
+        if bone.name.startswith("DEF"):
+            for c in list(bone.constraints):
+                if c.type == 'COPY_TRANSFORMS':
+                    # Store target and subtarget
+                    target = c.target
+                    subtarget = c.subtarget
+
+                    # Remove the COPY_TRANSFORMS constraint
+                    bone.constraints.remove(c)
+
+                    # Create a COPY_ROTATION constraint with the same target/subtarget
+                    new_constraint = bone.constraints.new(type='COPY_ROTATION')
+                    new_constraint.target = target
+                    new_constraint.subtarget = subtarget
+
 
 
 class GodotMecanim_Panel(bpy.types.Panel):
