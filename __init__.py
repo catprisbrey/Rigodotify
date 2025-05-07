@@ -35,6 +35,12 @@ def check_and_remove(bone_name) :
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
+def set_all_ik_stretch_zero(armature):
+    if armature and armature.type == 'ARMATURE':
+        for pbone in armature.pose.bones:
+            if hasattr(pbone, 'ik_stretch'):
+                pbone.ik_stretch = 0.0
+
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
@@ -296,20 +302,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         bpy.ops.object.posemode_toggle()
         # Set IK_Stretch property to 0 for specified bones
-        armature = bpy.context.object\
 
-        if armature.type == 'ARMATURE':
-            bones_to_check = [
-                "upper_arm_parent.L",
-                "upper_arm_parent.R",
-                "thigh_parent.L",
-                "thigh_parent.R"
-
-            ]
-
-        for bone_name in bones_to_check:
-            if bone_name in armature.pose.bones:
-                armature.pose.bones[bone_name]["IK_Stretch"] = 0.0
+        set_all_ik_stretch_zero(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
