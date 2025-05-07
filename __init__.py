@@ -35,11 +35,18 @@ def check_and_remove(bone_name) :
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
 
-def set_all_ik_stretch_zero(armature):
-    if armature and armature.type == 'ARMATURE':
-        for pbone in armature.pose.bones:
-            if hasattr(pbone, 'ik_stretch'):
-                pbone.ik_stretch = 0.0
+def remove_all_drivers_and_stretch_constraints(armature_obj):
+    # Remove all drivers
+    if armature_obj.animation_data and armature_obj.animation_data.drivers:
+        for fcurve in list(armature_obj.animation_data.drivers):
+            armature_obj.driver_remove(fcurve.data_path, fcurve.array_index)
+
+    # Remove "Stretch To" constraints from pose bones
+    for bone in armature_obj.pose.bones:
+        constraints_to_remove = [c for c in bone.constraints if c.type == 'STRETCH_TO']
+        for c in constraints_to_remove:
+            bone.constraints.remove(c)
+
 
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
@@ -303,7 +310,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         bpy.ops.object.posemode_toggle()
         # Set IK_Stretch property to 0 for specified bones
 
-        set_all_ik_stretch_zero(ob)
+        remove_all_drivers_and_stretch_constraints(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
