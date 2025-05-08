@@ -128,8 +128,79 @@ def add_leaf_bones_for_fingers_and_toes(armature_obj):
             if bone:
                 def_collection.assign(bone)
 
+def rename_for_unreal(ob,is_animal):
+        if is_animal:
+            return
+        namelist = [
+        ("DEF-hips", "pelvis"),
+        ("DEF-spine.001","spine_01"),
+        ("DEF-spine.002","spine_02"),
+        ("DEF-spine.003","spine_03"),
+        ("DEF-neck","neck_01"),
+        ("DEF-head", "head"),
+        ("DEF-jaw", "mouth"),
+        ("DEF-eye.L", "eye_l"),
+        ("DEF-eye.R", "eye_r"),
+        ("DEF-shoulder.L", "clavicle_l"),
+        ("DEF-shoulder.R", "clavicle_r"),
+        ("DEF-upper_arm.L","upperarm_l"),
+        ("DEF-upper_arm.R","upperarm_r"),
+        ("DEF-forearm.L","lowerarm_l"),
+        ("DEF-forearm.R","lowerarm_r"),
+        ("DEF-hand.L","hand_l"),
+        ("DEF-hand.R","hand_r"),
+        #left hand
+        ("DEF-f_index.01.L","index_01_l"),
+        ("DEF-f_index.02.L","index_02_l"),
+        ("DEF-f_index.03.L","index_03_l"),
+        ("DEF-f_middle.01.L","middle_01_l"),
+        ("DEF-f_middle.02.L","middle_02_l"),
+        ("DEF-f_middle.03.L","middle_03_l"),
+        ("DEF-f_ring.01.L","ring_01_l"),
+        ("DEF-f_ring.02.L","ring_02_l"),
+        ("DEF-f_ring.03.L","ring_03_l"),
+        ("DEF-f_pinky.01.L","pinky_01_l"),
+        ("DEF-f_pinky.02.L","pinky_02_l"),
+        ("DEF-f_pinky.03.L","pinky_03_l"),
+        ("DEF-thumb.01.L","thumb_01_l"),
+        ("DEF-thumb.02.L","thumb_02_l"),
+        ("DEF-thumb.03.L","thumb_03_l"),
+        # right hand
+        ("DEF-f_index.01.R", "index_01_r"),
+        ("DEF-f_index.02.R", "index_02_r"),
+        ("DEF-f_index.03.R", "index_03_r"),
+        ("DEF-f_middle.01.R", "middle_01_r"),
+        ("DEF-f_middle.02.R", "middle_02_r"),
+        ("DEF-f_middle.03.R", "middle_03_r"),
+        ("DEF-f_ring.01.R", "ring_01_r"),
+        ("DEF-f_ring.02.R", "ring_02_r"),
+        ("DEF-f_ring.03.R", "ring_03_r"),
+        ("DEF-f_pinky.01.R", "pinky_01_r"),
+        ("DEF-f_pinky.02.R", "pinky_02_r"),
+        ("DEF-f_pinky.03.R", "pinky_03_r"),
+        ("DEF-thumb.01.R", "thumb_01_r"),
+        ("DEF-thumb.02.R", "thumb_02_r"),
+        ("DEF-thumb.03.R", "thumb_03_r"),
+        ("DEF-breast.L", "breast_l"),
+        ("DEF-breast.R", "breast_r"),
+        ("DEF-thigh.L", "thigh_l"),
+        ("DEF-thigh.R", "thigh_r"),
+        ("DEF-shin.L", "calf_l"),
+        ("DEF-shin.R", "calf_r"),
+        ("DEF-foot.L", "foot_l"),
+        ("DEF-foot.R", "foot_r"),
+        ("DEF-toe.L", "ball_l"),
+        ("DEF-toe.R", "ball_r")
+        ]
 
-import bpy
+        for name, newname in namelist:
+            # get the pose bone with name
+            pb = ob.pose.bones.get(name)
+            # continue if no bone of that name
+            if pb is None:
+                continue
+            # rename
+            pb.name = newname
 
 def remove_invalid_drivers_from_armature(armature_obj):
     # Save the current context (area and space data)
@@ -147,9 +218,6 @@ def remove_invalid_drivers_from_armature(armature_obj):
 
     # Toggle Pose Mode if needed (if armature was in Pose Mode before)
     bpy.ops.object.posemode_toggle()
-
-# Example usage: Pass the armature object to the function
-remove_invalid_drivers_from_armature(bpy.context.object)  # Pass your armature object here
 
 
 class GodotMecanim_Panel(bpy.types.Panel):
@@ -424,6 +492,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         remove_all_drivers_and_stretch_constraints(ob)
         add_leaf_bones_for_fingers_and_toes(ob)
+        rename_for_unreal(ob,is_animal)
         remove_invalid_drivers_from_armature(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
