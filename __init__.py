@@ -129,6 +129,29 @@ def add_leaf_bones_for_fingers_and_toes(armature_obj):
                 def_collection.assign(bone)
 
 
+import bpy
+
+def remove_invalid_drivers_from_armature(armature_obj):
+    # Save the current context (area and space data)
+    current_area = bpy.context.area
+    current_ui_type = current_area.ui_type  # Track the current UI section type (e.g., 'DOPESHEET', '3D', etc.)
+
+    # Switch to the 'DRIVERS' editor context
+    bpy.context.area.ui_type = 'DRIVERS'
+
+    # Execute the invalid driver cleanup
+    bpy.ops.graph.driver_delete_invalid()
+
+    # Return the context to its original state
+    current_area.ui_type = current_ui_type
+
+    # Toggle Pose Mode if needed (if armature was in Pose Mode before)
+    bpy.ops.object.posemode_toggle()
+
+# Example usage: Pass the armature object to the function
+remove_invalid_drivers_from_armature(bpy.context.object)  # Pass your armature object here
+
+
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
     bl_space_type = "PROPERTIES"
@@ -152,10 +175,14 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
     def execute(self, context):
         ob = bpy.context.object
 
+        ## For unreal, rename the rig "Armature"
+
+
         is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
 
 
         bpy.ops.object.mode_set(mode='OBJECT')
+        ob.name = "Armature"
 
         if is_animal : # the root bone is spine.005
             print('is animal')
@@ -329,6 +356,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             constraint.subtarget = "eye.R"
 
 
+
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # fix a few names quick
@@ -393,6 +421,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         remove_all_drivers_and_stretch_constraints(ob)
         add_leaf_bones_for_fingers_and_toes(ob)
+        remove_invalid_drivers_from_armature(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
