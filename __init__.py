@@ -182,7 +182,10 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
 
         bpy.ops.object.mode_set(mode='OBJECT')
+
+        ## For unreal, rename the rig "Armature"
         ob.name = "Armature"
+        ob.data.name = "Armature"
 
         if is_animal : # the root bone is spine.005
             print('is animal')
