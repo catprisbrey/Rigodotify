@@ -20,6 +20,7 @@ bl_info = {
 
 import bpy
 import re
+import mathutils
 
 def check_and_parent(child_bone,parent_bone,to_tail = False) :
     ob = bpy.context.object
@@ -79,8 +80,53 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                 limit_scale.use_transform_limit = True
                 limit_scale.owner_space = 'LOCAL'
 
+## Adding leaf bones to fingers and toes in order to make Unreal happy
+def add_leaf_bones_for_fingers_and_toes(armature_obj):
+    bpy.context.view_layer.objects.active = armature_obj
+    bpy.ops.object.mode_set(mode='EDIT')
+    edit_bones = armature_obj.data.edit_bones
 
+    added_bone_names = []
 
+    for bone in edit_bones:
+        name = bone.name.lower()
+        is_finger_tip = name.startswith("def-") and (name.endswith(".03.l") or name.endswith(".03.r"))
+        is_toe_tip = name in {"def-toe.l", "def-toe.r"}
+
+        if not (is_finger_tip or is_toe_tip):
+            continue
+
+        if bone.name.endswith(".L") or bone.name.endswith(".R"):
+            base = bone.name[:-2]
+            side = bone.name[-2:]
+            leaf_name = f"{base}.end{side}"
+        else:
+            leaf_name = bone.name + ".end"
+
+        if leaf_name in edit_bones:
+            continue
+
+        leaf_bone = edit_bones.new(leaf_name)
+        leaf_bone.head = bone.tail.copy()
+
+        direction = (bone.tail - bone.head).normalized()
+        offset = direction * 0.05
+        leaf_bone.tail = bone.tail + offset
+
+        leaf_bone.parent = bone
+        leaf_bone.use_connect = True
+
+        added_bone_names.append(leaf_name)
+
+    bpy.ops.object.mode_set(mode='POSE')
+
+    ## Add these end leaf bones to the DEF group
+    def_collection = armature_obj.data.collections.get("DEF")
+    if def_collection:
+        for name in added_bone_names:
+            bone = armature_obj.data.bones.get(name)
+            if bone:
+                def_collection.assign(bone)
 
 
 class GodotMecanim_Panel(bpy.types.Panel):
@@ -346,6 +392,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         # Set IK_Stretch property to 0 for specified bones
 
         remove_all_drivers_and_stretch_constraints(ob)
+        add_leaf_bones_for_fingers_and_toes(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
