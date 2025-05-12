@@ -51,7 +51,7 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
             for c in stretch_constraints:
                 bone.constraints.remove(c)
 
-            if bone.name != "DEF-hips":
+            if bone.name not in ["DEF-hips","DEF-eye.L","DEF-eye.R","DEF-jaw"]:
                 # Replace "Copy Transforms" with "Copy Rotation"
                 copy_transform_constraints = [c for c in bone.constraints if c.type == 'COPY_TRANSFORMS']
                 for ct in copy_transform_constraints:
@@ -137,8 +137,8 @@ def rename_for_unreal(ob,is_animal):
         ("DEF-spine.002","spine_02"),
         ("DEF-spine.003","spine_03"),
         ("DEF-neck","neck_01"),
-        ("DEF-head", "head"),
-        ("DEF-jaw", "mouth"),
+        ("DEF-head", "Head"),
+        ("DEF-jaw", "Jaw"),
         ("DEF-eye.L", "eye_l"),
         ("DEF-eye.R", "eye_r"),
         ("DEF-shoulder.L", "clavicle_l"),
@@ -153,34 +153,44 @@ def rename_for_unreal(ob,is_animal):
         ("DEF-f_index.01.L","index_01_l"),
         ("DEF-f_index.02.L","index_02_l"),
         ("DEF-f_index.03.L","index_03_l"),
+        ("DEF-f_index.03.end.L","index_04_leaf_l"),
         ("DEF-f_middle.01.L","middle_01_l"),
         ("DEF-f_middle.02.L","middle_02_l"),
         ("DEF-f_middle.03.L","middle_03_l"),
+        ("DEF-f_middle.03.end.L","middle_04_leaf_l"),
         ("DEF-f_ring.01.L","ring_01_l"),
         ("DEF-f_ring.02.L","ring_02_l"),
         ("DEF-f_ring.03.L","ring_03_l"),
+        ("DEF-f_ring.03.end.L","ring_04_leaf_l"),
         ("DEF-f_pinky.01.L","pinky_01_l"),
         ("DEF-f_pinky.02.L","pinky_02_l"),
         ("DEF-f_pinky.03.L","pinky_03_l"),
+        ("DEF-f_pinky.03.end.L","pinky_04_leaf_l"),
         ("DEF-thumb.01.L","thumb_01_l"),
         ("DEF-thumb.02.L","thumb_02_l"),
         ("DEF-thumb.03.L","thumb_03_l"),
+        ("DEF-thumb.03.end.L","thumb_04_leaf_l"),
         # right hand
         ("DEF-f_index.01.R", "index_01_r"),
         ("DEF-f_index.02.R", "index_02_r"),
         ("DEF-f_index.03.R", "index_03_r"),
+        ("DEF-f_index.03.end.R","index_04_leaf_r"),
         ("DEF-f_middle.01.R", "middle_01_r"),
         ("DEF-f_middle.02.R", "middle_02_r"),
         ("DEF-f_middle.03.R", "middle_03_r"),
+        ("DEF-f_middle.03.end.R","middle_04_leaf_r"),
         ("DEF-f_ring.01.R", "ring_01_r"),
         ("DEF-f_ring.02.R", "ring_02_r"),
         ("DEF-f_ring.03.R", "ring_03_r"),
+        ("DEF-f_ring.03.end.R","ring_04_leaf_r"),
         ("DEF-f_pinky.01.R", "pinky_01_r"),
         ("DEF-f_pinky.02.R", "pinky_02_r"),
         ("DEF-f_pinky.03.R", "pinky_03_r"),
+        ("DEF-f_pinky.03.end.R","pinky_04_leaf_r"),
         ("DEF-thumb.01.R", "thumb_01_r"),
         ("DEF-thumb.02.R", "thumb_02_r"),
         ("DEF-thumb.03.R", "thumb_03_r"),
+        ("DEF-thumb.03.end.R","thumb_04_leaf_r"),
         ("DEF-breast.L", "breast_l"),
         ("DEF-breast.R", "breast_r"),
         ("DEF-thigh.L", "thigh_l"),
@@ -190,7 +200,9 @@ def rename_for_unreal(ob,is_animal):
         ("DEF-foot.L", "foot_l"),
         ("DEF-foot.R", "foot_r"),
         ("DEF-toe.L", "ball_l"),
-        ("DEF-toe.R", "ball_r")
+        ("DEF-toe.R", "ball_r"),
+        ("DEF-toe.end.L", "ball_leaf_l"),
+        ("DEF-toe.end.R", "ball_leaf_r")
         ]
 
         for name, newname in namelist:
