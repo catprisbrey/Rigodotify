@@ -59,21 +59,21 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                     new_constraint.target = ct.target
                     new_constraint.subtarget = ct.subtarget
                     bone.constraints.remove(ct)
-
-            # Add Limit Scale constraint
-            limit_scale = bone.constraints.new('LIMIT_SCALE')
-            limit_scale.use_min_x = True
-            limit_scale.use_min_y = True
-            limit_scale.use_min_z = True
-            limit_scale.use_max_x = True
-            limit_scale.use_max_y = True
-            limit_scale.use_max_z = True
-            limit_scale.min_x = 1.0
-            limit_scale.min_y = 1.0
-            limit_scale.min_z = 1.0
-            limit_scale.max_x = 1.0
-            limit_scale.max_y = 1.0
-            limit_scale.max_z = 1.0
+            if bone.name not in ["DEF-eye.L","DEF-eye.R","DEF-jaw"]:
+                # Add Limit Scale constraint
+                limit_scale = bone.constraints.new('LIMIT_SCALE')
+                limit_scale.use_min_x = True
+                limit_scale.use_min_y = True
+                limit_scale.use_min_z = True
+                limit_scale.use_max_x = True
+                limit_scale.use_max_y = True
+                limit_scale.use_max_z = True
+                limit_scale.min_x = 1.0
+                limit_scale.min_y = 1.0
+                limit_scale.min_z = 1.0
+                limit_scale.max_x = 1.0
+                limit_scale.max_y = 1.0
+                limit_scale.max_z = 1.0
 
             # Special case: thigh or shin
             if "thigh" in bone.name.lower() or "shin" in bone.name.lower():
