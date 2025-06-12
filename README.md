@@ -2,17 +2,20 @@
 
 ###
 
-<p align="left">A dual purpose Rigify feature set and Blender rig converter plugin. Adds Godot/Unity style skeletons to your armature options. Rigs can be converted in a button press to make them game engine compatible.<br><br>Built for Godot but should be Unity compatible as well.</p>
+<p align="left">A dual purpose Rigify feature set and Blender rig converter plugin. Recently reworked to add compatibilty across all major game engine retargeters: Godot, Unity, and Unreal standards are used to make retargeters autodetect bone structure and more happily share animations across models.
+
+Rigs can be converted in a button press to make them game engine compatible. Convert the rig before parenting it to your mesh and your model will be ready for animating for games!
+
+Bonus animal rigs based off Rigify for: Canid, Felid, Equid animal bodies.(Experimental)</p>
 
 ###
-
 <h2 align="left">Purpose:</h2>
 
-###
 
-<p align="left">Skeletons and rigs used for game development are distinct to those used for animation. They tend to be placed in T-Pose, have far fewer bones, and a hierarchical bone order. This makes animations more efficient for processing and also aids in animation transferring to other characters. <br><br>This plugin and feature set produces a nearly standard Godot or Unity skeleton with extra bones removed, the bone order fixed, and friendlier names given for mapping them in engine.</p>
+<p align="left">Skeletons and rigs used for game development are distinct to those used for animation. They tend to be placed in T-Pose, have far fewer bones, and a hierarchical bone order. This makes animations more efficient for processing and also aids in animation transferring to other characters, and keeping in-engine IKs working as expected.
 
-###
+This plugin and feature set produces standard Godot, Unity and Unreal skeletons  with extra Rigify bones removed, the bone order fixed, and friendlier names given for mapping them in engine.​ Leaf bones are added for Unreal, and constraints adjusted to minimize scale errors, and animation jitters in engines.</p>
+
 
 <h2 align="left">Installation:</h2>
 
