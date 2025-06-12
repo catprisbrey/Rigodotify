@@ -20,6 +20,7 @@ bl_info = {
 
 import bpy
 import re
+import mathutils
 
 def check_and_parent(child_bone,parent_bone,to_tail = False) :
     ob = bpy.context.object
@@ -34,6 +35,202 @@ def check_and_remove(bone_name) :
     ob = bpy.context.object
     if bone_name in ob.data.edit_bones :
         ob.data.edit_bones.remove(ob.data.edit_bones[bone_name])
+
+def remove_all_drivers_and_stretch_constraints(armature_obj):
+    # Remove drivers only for DEF bones
+    if armature_obj.animation_data:
+        for fcurve in list(armature_obj.animation_data.drivers):
+            if 'pose.bones["DEF-' in fcurve.data_path:
+                armature_obj.animation_data.drivers.remove(fcurve)
+
+    for bone in armature_obj.pose.bones:
+        # Skip hips
+        if bone.name.startswith("DEF-"):
+            # Remove "Stretch To" constraints
+            stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
+            for c in stretch_constraints:
+                bone.constraints.remove(c)
+
+            if bone.name not in ["DEF-hips","DEF-eye.L","DEF-eye.R","DEF-jaw"]:
+                # Replace "Copy Transforms" with "Copy Rotation"
+                copy_transform_constraints = [c for c in bone.constraints if c.type == 'COPY_TRANSFORMS']
+                for ct in copy_transform_constraints:
+                    new_constraint = bone.constraints.new('COPY_ROTATION')
+                    new_constraint.target = ct.target
+                    new_constraint.subtarget = ct.subtarget
+                    bone.constraints.remove(ct)
+            if bone.name not in ["DEF-eye.L","DEF-eye.R","DEF-jaw"]:
+                # Add Limit Scale constraint
+                limit_scale = bone.constraints.new('LIMIT_SCALE')
+                limit_scale.use_min_x = True
+                limit_scale.use_min_y = True
+                limit_scale.use_min_z = True
+                limit_scale.use_max_x = True
+                limit_scale.use_max_y = True
+                limit_scale.use_max_z = True
+                limit_scale.min_x = 1.0
+                limit_scale.min_y = 1.0
+                limit_scale.min_z = 1.0
+                limit_scale.max_x = 1.0
+                limit_scale.max_y = 1.0
+                limit_scale.max_z = 1.0
+
+            # Special case: thigh or shin
+            if "thigh" in bone.name.lower() or "shin" in bone.name.lower():
+                limit_scale.use_transform_limit = True
+                limit_scale.owner_space = 'LOCAL'
+
+## Adding leaf bones to fingers and toes in order to make Unreal happy
+def add_leaf_bones_for_fingers_and_toes(armature_obj):
+    bpy.context.view_layer.objects.active = armature_obj
+    bpy.ops.object.mode_set(mode='EDIT')
+    edit_bones = armature_obj.data.edit_bones
+
+    added_bone_names = []
+
+    for bone in edit_bones:
+        name = bone.name.lower()
+        is_finger_tip = name.startswith("def-") and (name.endswith(".03.l") or name.endswith(".03.r"))
+        is_toe_tip = name in {"def-toe.l", "def-toe.r"}
+
+        if not (is_finger_tip or is_toe_tip):
+            continue
+
+        if bone.name.endswith(".L") or bone.name.endswith(".R"):
+            base = bone.name[:-2]
+            side = bone.name[-2:]
+            leaf_name = f"{base}.end{side}"
+        else:
+            leaf_name = bone.name + ".end"
+
+        if leaf_name in edit_bones:
+            continue
+
+        leaf_bone = edit_bones.new(leaf_name)
+        leaf_bone.head = bone.tail.copy()
+
+        direction = (bone.tail - bone.head).normalized()
+        offset = direction * 0.05
+        leaf_bone.tail = bone.tail + offset
+
+        leaf_bone.parent = bone
+        leaf_bone.use_connect = True
+
+        added_bone_names.append(leaf_name)
+
+    bpy.ops.object.mode_set(mode='POSE')
+
+    ## Add these end leaf bones to the DEF group
+    def_collection = armature_obj.data.collections.get("DEF")
+    if def_collection:
+        for name in added_bone_names:
+            bone = armature_obj.data.bones.get(name)
+            if bone:
+                def_collection.assign(bone)
+
+def rename_for_unreal(ob,is_animal):
+        if is_animal:
+            return
+        namelist = [
+        ("DEF-hips", "pelvis"),
+        ("DEF-spine.001","spine_01"),
+        ("DEF-spine.002","spine_02"),
+        ("DEF-spine.003","spine_03"),
+        ("DEF-neck","neck_01"),
+        ("DEF-head", "Head"),
+        ("DEF-jaw", "Jaw"),
+        ("DEF-eye.L", "eye_l"),
+        ("DEF-eye.R", "eye_r"),
+        ("DEF-shoulder.L", "clavicle_l"),
+        ("DEF-shoulder.R", "clavicle_r"),
+        ("DEF-upper_arm.L","upperarm_l"),
+        ("DEF-upper_arm.R","upperarm_r"),
+        ("DEF-forearm.L","lowerarm_l"),
+        ("DEF-forearm.R","lowerarm_r"),
+        ("DEF-hand.L","hand_l"),
+        ("DEF-hand.R","hand_r"),
+        #left hand
+        ("DEF-f_index.01.L","index_01_l"),
+        ("DEF-f_index.02.L","index_02_l"),
+        ("DEF-f_index.03.L","index_03_l"),
+        ("DEF-f_index.03.end.L","index_04_leaf_l"),
+        ("DEF-f_middle.01.L","middle_01_l"),
+        ("DEF-f_middle.02.L","middle_02_l"),
+        ("DEF-f_middle.03.L","middle_03_l"),
+        ("DEF-f_middle.03.end.L","middle_04_leaf_l"),
+        ("DEF-f_ring.01.L","ring_01_l"),
+        ("DEF-f_ring.02.L","ring_02_l"),
+        ("DEF-f_ring.03.L","ring_03_l"),
+        ("DEF-f_ring.03.end.L","ring_04_leaf_l"),
+        ("DEF-f_pinky.01.L","pinky_01_l"),
+        ("DEF-f_pinky.02.L","pinky_02_l"),
+        ("DEF-f_pinky.03.L","pinky_03_l"),
+        ("DEF-f_pinky.03.end.L","pinky_04_leaf_l"),
+        ("DEF-thumb.01.L","thumb_01_l"),
+        ("DEF-thumb.02.L","thumb_02_l"),
+        ("DEF-thumb.03.L","thumb_03_l"),
+        ("DEF-thumb.03.end.L","thumb_04_leaf_l"),
+        # right hand
+        ("DEF-f_index.01.R", "index_01_r"),
+        ("DEF-f_index.02.R", "index_02_r"),
+        ("DEF-f_index.03.R", "index_03_r"),
+        ("DEF-f_index.03.end.R","index_04_leaf_r"),
+        ("DEF-f_middle.01.R", "middle_01_r"),
+        ("DEF-f_middle.02.R", "middle_02_r"),
+        ("DEF-f_middle.03.R", "middle_03_r"),
+        ("DEF-f_middle.03.end.R","middle_04_leaf_r"),
+        ("DEF-f_ring.01.R", "ring_01_r"),
+        ("DEF-f_ring.02.R", "ring_02_r"),
+        ("DEF-f_ring.03.R", "ring_03_r"),
+        ("DEF-f_ring.03.end.R","ring_04_leaf_r"),
+        ("DEF-f_pinky.01.R", "pinky_01_r"),
+        ("DEF-f_pinky.02.R", "pinky_02_r"),
+        ("DEF-f_pinky.03.R", "pinky_03_r"),
+        ("DEF-f_pinky.03.end.R","pinky_04_leaf_r"),
+        ("DEF-thumb.01.R", "thumb_01_r"),
+        ("DEF-thumb.02.R", "thumb_02_r"),
+        ("DEF-thumb.03.R", "thumb_03_r"),
+        ("DEF-thumb.03.end.R","thumb_04_leaf_r"),
+        ("DEF-breast.L", "breast_l"),
+        ("DEF-breast.R", "breast_r"),
+        ("DEF-thigh.L", "thigh_l"),
+        ("DEF-thigh.R", "thigh_r"),
+        ("DEF-shin.L", "calf_l"),
+        ("DEF-shin.R", "calf_r"),
+        ("DEF-foot.L", "foot_l"),
+        ("DEF-foot.R", "foot_r"),
+        ("DEF-toe.L", "ball_l"),
+        ("DEF-toe.R", "ball_r"),
+        ("DEF-toe.end.L", "ball_leaf_l"),
+        ("DEF-toe.end.R", "ball_leaf_r")
+        ]
+
+        for name, newname in namelist:
+            # get the pose bone with name
+            pb = ob.pose.bones.get(name)
+            # continue if no bone of that name
+            if pb is None:
+                continue
+            # rename
+            pb.name = newname
+
+def remove_invalid_drivers_from_armature(armature_obj):
+    # Save the current context (area and space data)
+    current_area = bpy.context.area
+    current_ui_type = current_area.ui_type  # Track the current UI section type (e.g., 'DOPESHEET', '3D', etc.)
+
+    # Switch to the 'DRIVERS' editor context
+    bpy.context.area.ui_type = 'DRIVERS'
+
+    # Execute the invalid driver cleanup
+    bpy.ops.graph.driver_delete_invalid()
+
+    # Return the context to its original state
+    current_area.ui_type = current_ui_type
+
+    # Toggle Pose Mode if needed (if armature was in Pose Mode before)
+    bpy.ops.object.posemode_toggle()
+
 
 class GodotMecanim_Panel(bpy.types.Panel):
     bl_label = "Rigify to Godot converter"
@@ -58,10 +255,17 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
     def execute(self, context):
         ob = bpy.context.object
 
+        ## For unreal, rename the rig "Armature"
+
+
         is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
 
 
         bpy.ops.object.mode_set(mode='OBJECT')
+
+        ## For unreal, rename the rig "Armature"
+        ob.name = "Armature"
+        ob.data.name = "Armature"
 
         if is_animal : # the root bone is spine.005
             print('is animal')
@@ -235,6 +439,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
             constraint.subtarget = "eye.R"
 
 
+
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # fix a few names quick
@@ -296,20 +501,11 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         bpy.ops.object.posemode_toggle()
         # Set IK_Stretch property to 0 for specified bones
-        armature = bpy.context.object\
 
-        if armature.type == 'ARMATURE':
-            bones_to_check = [
-                "upper_arm_parent.L",
-                "upper_arm_parent.R",
-                "thigh_parent.L",
-                "thigh_parent.R"
-
-            ]
-
-        for bone_name in bones_to_check:
-            if bone_name in armature.pose.bones:
-                armature.pose.bones[bone_name]["IK_Stretch"] = 0.0
+        remove_all_drivers_and_stretch_constraints(ob)
+        add_leaf_bones_for_fingers_and_toes(ob)
+        rename_for_unreal(ob,is_animal)
+        remove_invalid_drivers_from_armature(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         self.report({'INFO'}, 'Godot ready rig!')
