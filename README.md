@@ -62,9 +62,12 @@
 
 ###
 
-<div align="center">
-  <img height="640" src="https://github.com/catprisbrey/Rigodotify/blob/master/HowTo/final-bone-structure.png?raw=true"  />
-</div>
+root<br/>-pelvis<br/>--spine_01<br/>---spine_02<br/>----spine_03<br/>-----breast_l<br/>-----breast_r<br/>-----clavicle_l<br/>------upperarm_l<br/>-------lowerarm_l<br/>--------hand_l<br/>---------index_01_l<br/>----------index_02_l<br/>-----------index_03_l<br/>------------index_04_leaf_l<br/>---------middle_01_l<br/>----------middle_02_l<br/>-----------middle_03_l<br/>------------middle_04_leaf_l<br/>---------pinky_01_l<br/>----------pinky_02_l<br/>-----------pinky_03_l<br/>------------pinky_04_leaf_l<br/>---------ring_01_l<br/>----------ring_02_l<br/>-----------ring_03_l<br/>------------ring_04_leaf_l<br/>---------thumb_01_l<br/>----------thumb_02_l<br/>-----------thumb_03_l<br/>------------thumb_04_leaf_l<br/>-----clavicle_r<br/>------upperarm_r<br/>-------lowerarm_r<br/>--------hand_r<br/>---------index_01_r<br/>----------index_02_r<br/>-----------index_03_r<br/>------------index_04_leaf_r<br/>---------middle_01_r<br/>----------middle_02_r<br/>-----------middle_03_r<br/>------------middle_04_leaf_r<br/>---------pinky_01_r<br/>----------pinky_02_r<br/>-----------pinky_03_r<br/>------------pinky_04_leaf_r<br/>---------ring_01_r<br/>----------ring_02_r<br/>-----------ring_03_r<br/>------------ring_04_leaf_r<br/>---------thumb_01_r<br/>----------thumb_02_r<br/>-----------thumb_03_r<br/>------------thumb_04_leaf_r<br/>-----neck_01<br/>------Head<br/>-------Jaw<br/>-------eye_l<br/>-------eye_r<br/>--thigh_l<br/>---calf_l<br/>----foot_l<br/>-----ball_l<br/>------ball_leaf_l<br/>--thigh_r<br/>---calf_r<br/>----foot_r<br/>-----ball_r<br/>------ball_leaf_r
+
+
+
+
+
 
 ###
 
