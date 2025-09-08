@@ -2,7 +2,9 @@
 
 ###
 
-<p align="left">A dual purpose Rigify feature set and Blender rig converter plugin. Recently reworked to add compatibilty across all major game engine retargeters: Godot, Unity, and Unreal standards are used to make retargeters autodetect bone structure and more happily share animations across models.
+<p align="left">NOTE: If github downloads the file with a longer name than just "Rigoditify.zip" rename it to just the base name.
+  
+A dual purpose Rigify feature set and Blender rig converter plugin. Recently reworked to add compatibilty across all major game engine retargeters: Godot, Unity, and Unreal standards are used to make retargeters autodetect bone structure and more happily share animations across models.
 
 Rigs can be converted in a button press to make them game engine compatible. Convert the rig before parenting it to your mesh and your model will be ready for animating for games!
 
