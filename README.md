@@ -2,7 +2,7 @@
 
 ###
 
-<p align="left">NOTE: If github downloads the file with a longer name than just "Rigoditify.zip" rename it to just the base name.
+<p align="left">NOTE: If github downloads the file with a longer name than just "Rigodotify.zip" rename it to just the base name.
   
 A dual purpose Rigify feature set and Blender rig converter plugin. Recently reworked to add compatibilty across all major game engine retargeters: Godot, Unity, and Unreal standards are used to make retargeters autodetect bone structure and more happily share animations across models.
 
