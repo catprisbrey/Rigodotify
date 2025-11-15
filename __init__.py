@@ -45,11 +45,10 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
 
     for bone in armature_obj.pose.bones:
         # Skip hips
-        if bone.name.startswith("DEF-"):
+        if bone.name.startswith("DEF-")  :
             # Remove "Stretch To" constraints
-            stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
-            for c in stretch_constraints:
-                bone.constraints.remove(c)
+
+
 
             if bone.name not in ["DEF-hips","DEF-eye.L","DEF-eye.R","DEF-jaw"]:
                 # Replace "Copy Transforms" with "Copy Rotation"
@@ -59,6 +58,14 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                     new_constraint.target = ct.target
                     new_constraint.subtarget = ct.subtarget
                     bone.constraints.remove(ct)
+
+            stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
+            for c in stretch_constraints:
+                if bone.name in ["DEF-spine.002"]:
+                    bone.constraints.move(0, 1)
+                else:
+                    bone.constraints.remove(c)
+
             if bone.name not in ["DEF-eye.L","DEF-eye.R","DEF-jaw"]:
                 # Add Limit Scale constraint
                 limit_scale = bone.constraints.new('LIMIT_SCALE')
@@ -400,42 +407,42 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_parent('DEF-breast.R','DEF-spine.003')
         check_and_parent('DEF-tail','DEF-spine')
 
-        ob.name = "godot_rig"
+        ob.name = "Armature"
 
         # Fix some odd parenting issues of failed contraints
         if "DEF-breast.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-breast.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-breast.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "breast.R"
 
         if "DEF-breast.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-breast.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-breast.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "breast.L"
 
         if "DEF-shoulder.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-shoulder.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-shoulder.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "shoulder.R"
 
         if "DEF-shoulder.L" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-shoulder.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-shoulder.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "shoulder.L"
 
         if "DEF-jaw" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-jaw"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-jaw"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "jaw"
 
         if "DEF-eye.L" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-eye.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-eye.L"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "eye.L"
 
         if "DEF-eye.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["godot_rig"].pose.bones["DEF-eye.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["godot_rig"]
+            constraint = bpy.data.objects["Armature"].pose.bones["DEF-eye.R"].constraints.new('COPY_TRANSFORMS')
+            constraint.target = bpy.data.objects["Armature"]
             constraint.subtarget = "eye.R"
 
 
@@ -520,7 +527,7 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
 def reparent_bones_to_metarig_parents():
     # Ensure we harve the active armature and the 'metarig' armature
-    godot_rig = bpy.data.objects.get('godot_rig')
+    godot_rig = bpy.data.objects.get("Armature")
     metarig_armature = bpy.data.objects.get('metarig')
     # Ensure we have the active armature and the 'metarig' armature
 
@@ -570,8 +577,8 @@ def reparent_bones_to_metarig_parents():
                                 bone.parent = parent_bone
                                 print(f"Reparented {bone.name} to {parent_bone_name}")
                                 # Constraint the bone to its controller
-                                constraint = bpy.data.objects["godot_rig"].pose.bones[bone.name].constraints.new('COPY_TRANSFORMS')
-                                constraint.target = bpy.data.objects["godot_rig"]
+                                constraint = bpy.data.objects["Armature"].pose.bones[bone.name].constraints.new('COPY_TRANSFORMS')
+                                constraint.target = bpy.data.objects["Armature"]
                                 constraint.subtarget = bone.name[4:]
 
 def register():
