@@ -242,8 +242,18 @@ class GodotMecanim_Panel(bpy.types.Panel):
     bl_context = "data"
 
     @classmethod
-    def poll(self, context):
-        return context.object and context.object.type == 'ARMATURE' and "DEF-spine.005" in bpy.context.object.data.bones
+    def poll(cls, context):
+        obj = context.object
+        if not obj or obj.type != 'ARMATURE':
+            return False
+
+        current_rig_id = obj.data.get("rig_id")
+        if current_rig_id is None:
+            return False
+
+        # Check if rig_id changed (indicates regeneration)
+        stored_rig_id = obj.data.get("last_rig_id")
+        return current_rig_id != stored_rig_id
 
     def draw(self, context):
         self.layout.operator("rig4mec.convert2godot")
@@ -452,8 +462,9 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         add_leaf_bones_for_fingers_and_toes(ob)
         rename_for_unreal(ob)
         remove_invalid_drivers_from_armature(ob)
-
+        ob.data["last_rig_id"] = ob.data.get("rig_id")
         bpy.ops.object.mode_set(mode='OBJECT')
+
         self.report({'INFO'}, 'Rigodotify rig is ready!')
 
         # Set armature viewport display to 'In Front'
