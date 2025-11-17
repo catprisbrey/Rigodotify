@@ -1,0 +1,15 @@
+schema_version = "1.0.0"
+
+id = "rigodotify"            # MUST exist, lowercase, no spaces
+version = "2.2.0"
+type = "add-on"
+
+name = "Rigodotify"
+tagline = "Rigify rig converter for Godot/Unity/Unreal compatible humanoids"
+maintainer = "catprisbrey"
+homepage = "https://github.com/catprisbrey/Rigodotify"
+tags = ["Animation","Rigging","Game Engine"]
+blender_version_min = "4.0.0"
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
