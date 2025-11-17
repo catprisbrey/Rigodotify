@@ -1,6 +1,6 @@
 rigify_info = {
-    "name": "Godot Rigs",
-    "description": "Rigs built with Godot/Unity compatible skeletons in mind.",
+    "name": "Rigodotify Rigs",
+    "description": "Rigs built with Godot/Unity/Unreal compatible skeletons in mind.",
     "author": "Cat Prisbrey",
     "warning": "Experimental.",
     # Web site links
@@ -12,9 +12,10 @@ rigify_info = {
 bl_info = {
     "name": "Rigodotify",
     "category": "Rigging",
-    "description": "Change Rigify rig into a Godot/Unity compatible basic humanoid",
+    "description": "Rigify rig converter for Godot/Unity/Unreal compatible humanoids",
     "location": "At the bottom of Rigify rig data/armature tab",
     "link": "https://github.com/catprisbrey/Rigodotify",
+    "version": (2, 2, 0),
     "blender":(4,0,0)
 }
 
@@ -47,10 +48,7 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
         # Skip hips
         if bone.name.startswith("DEF-")  :
             # Remove "Stretch To" constraints
-
-
-
-            if bone.name not in ["DEF-hips","DEF-eye.L","DEF-eye.R","DEF-jaw"]:
+            if bone.name not in ["DEF-spine","DEF-eye.L","DEF-eye.R","DEF-jaw"]:
                 # Replace "Copy Transforms" with "Copy Rotation"
                 copy_transform_constraints = [c for c in bone.constraints if c.type == 'COPY_TRANSFORMS']
                 for ct in copy_transform_constraints:
@@ -117,7 +115,7 @@ def add_leaf_bones_for_fingers_and_toes(armature_obj):
         leaf_bone.head = bone.tail.copy()
 
         direction = (bone.tail - bone.head).normalized()
-        offset = direction * 0.05
+        offset = direction * 0.05 # just to stretch the bone enough to be seen
         leaf_bone.tail = bone.tail + offset
 
         leaf_bone.parent = bone
@@ -135,16 +133,14 @@ def add_leaf_bones_for_fingers_and_toes(armature_obj):
             if bone:
                 def_collection.assign(bone)
 
-def rename_for_unreal(ob,is_animal):
-        if is_animal:
-            return
+def rename_for_unreal(ob):
         namelist = [
-        ("DEF-hips", "pelvis"),
+        ("DEF-spine", "pelvis"),
         ("DEF-spine.001","spine_01"),
         ("DEF-spine.002","spine_02"),
         ("DEF-spine.003","spine_03"),
-        ("DEF-neck","neck_01"),
-        ("DEF-head", "Head"),
+        ("DEF-spine.004","neck_01"),
+        ("DEF-spine.005", "Head"),
         ("DEF-jaw", "Jaw"),
         ("DEF-eye.L", "eye_l"),
         ("DEF-eye.R", "eye_r"),
@@ -240,7 +236,7 @@ def remove_invalid_drivers_from_armature(armature_obj):
 
 
 class GodotMecanim_Panel(bpy.types.Panel):
-    bl_label = "Rigify to Godot converter"
+    bl_label = "Rigify to Game Dev skeleton converter"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "data"
@@ -255,7 +251,7 @@ class GodotMecanim_Panel(bpy.types.Panel):
 
 class GodotMecanim_Convert2Godot(bpy.types.Operator):
     bl_idname = "rig4mec.convert2godot"
-    bl_label = "Prepare rig for Godot"
+    bl_label = "Convert to Rigodotify rig"
 
 
 
@@ -264,18 +260,13 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         ## For unreal, rename the rig "Armature"
 
-
-        is_animal = context.object.type == 'ARMATURE' and "DEF-tail" in bpy.context.object.data.bones
-
-
         bpy.ops.object.mode_set(mode='OBJECT')
 
         ## For unreal, rename the rig "Armature"
         ob.name = "Armature"
         ob.data.name = "Armature"
 
-        if is_animal : # the root bone is spine.005
-            print('is animal')
+
         if 'root' in ob.data.bones :
             ob.data.bones['root'].use_deform = True
         if 'DEF-breast.L' in ob.data.bones :
@@ -288,46 +279,8 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         if 'DEF-pelvis.R' in ob.data.bones :
             ob.data.bones['DEF-pelvis.R'].use_deform = False
 
-
-
         bpy.ops.object.mode_set(mode='EDIT')
 
-        #if is_animal:
-            #check_and_parent('DEF-tail','DEF-spine.004')
-            #check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
-            #check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
-            #check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
-            #check_and_remove('DEF-upper_arm.L.001')
-            #check_and_remove('DEF-forearm.L.001')
-
-            #check_and_parent('DEF-forefoot.L','DEF-forearm.L')
-            #check_and_parent('DEF-f_toes.L','DEF-forefoot.L')
-            #check_and_parent('DEF-f_hoof.L','DEF-f_toes.L')
-            #check_and_remove('DEF-forefoot.L.001')
-
-            #check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
-            #check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
-            #check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
-            #check_and_remove('DEF-upper_arm.R.001')
-            #check_and_remove('DEF-forearm.R.001')
-
-            #check_and_parent('DEF-forefoot.R','DEF-forearm.R')
-            #check_and_parent('DEF-f_toes.R','DEF-forefoot.R')
-            #check_and_parent('DEF-f_hoof.R','DEF-f_toes.R')
-            #check_and_remove('DEF-forefoot.R.001')
-
-            #check_and_parent('DEF-shoulder.L','DEF-spine.007')
-            #check_and_parent('DEF-shoulder.R','DEF-spine.007')
-            #check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
-            #check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
-            #check_and_parent('DEF-thigh.L','DEF-spine.004')
-            #check_and_parent('DEF-thigh.R','DEF-spine.004')
-            #check_and_parent('DEF-jaw','DEF-spine.009')
-            #check_and_parent('DEF-eye.L','DEF-spine.009')
-            #check_and_parent('DEF-eye.R','DEF-spine.009')
-
-
-        #else:
         check_and_parent('DEF-shoulder.L','DEF-spine.003')
         check_and_parent('DEF-shoulder.R','DEF-spine.003')
         check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
@@ -449,35 +402,21 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        # fix a few names quick
-        if is_animal:
-            namelist = [
-                ("DEF-spine", "DEF-hips"),
-                ("DEF-spine.004","DEF-neck"),
-                ("DEF-spine.005", "DEF-head"),
-                #("DEF-spine.006", "DEF-spine.002"),
-                #("DEF-spine.005", "DEF-spine.001"),
-                ("DEF-eye.L", "DEF-ear.L"),
-                ("DEF-eye.R", "DEF-ear.R"),
-                ("eye.L", "ear.L"),
-                ("eye.R", "ear.R")
-                ]
-
-        else:
-            namelist = [
-                ("DEF-spine", "DEF-hips"),
-                ("DEF-spine.004","DEF-neck"),
-                ("DEF-spine.005", "DEF-head")
-                ]
-
-        for name, newname in namelist:
-            # get the pose bone with name
-            pb = ob.pose.bones.get(name)
-            # continue if no bone of that name
-            if pb is None:
-                continue
-            # rename
-            pb.name = newname
+        # # fix a few names quick
+        # namelist = [
+        #         ("DEF-spine", "DEF-hips"),
+        #         ("DEF-spine.004","DEF-neck"),
+        #         ("DEF-spine.005", "DEF-head")
+        #         ]
+        #
+        # for name, newname in namelist:
+        #     # get the pose bone with name
+        #     pb = ob.pose.bones.get(name)
+        #     # continue if no bone of that name
+        #     if pb is None:
+        #         continue
+        #     # rename
+        #     pb.name = newname
 
         reparent_bones_to_metarig_parents()
 
@@ -511,11 +450,11 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
 
         remove_all_drivers_and_stretch_constraints(ob)
         add_leaf_bones_for_fingers_and_toes(ob)
-        rename_for_unreal(ob,is_animal)
+        rename_for_unreal(ob)
         remove_invalid_drivers_from_armature(ob)
 
         bpy.ops.object.mode_set(mode='OBJECT')
-        self.report({'INFO'}, 'Godot ready rig!')
+        self.report({'INFO'}, 'Rigodotify rig is ready!')
 
         # Set armature viewport display to 'In Front'
         ob.show_in_front = True
@@ -563,11 +502,11 @@ def reparent_bones_to_metarig_parents():
                             parent_bone_name = metarig_bone.parent.name
                             #Fix diferent bone names between rigs
                             if parent_bone_name == "spine.005":
-                                parent_bone_name = "head"
+                                parent_bone_name = "Head"
                             if parent_bone_name == "spine.004":
-                                parent_bone_name = "neck"
+                                parent_bone_name = "neck_01"
                             if parent_bone_name == "spine":
-                                parent_bone_name = "hips"
+                                parent_bone_name = "pelvis"
                             print(f"PARENT OF {active_bone_name} = {parent_bone_name}.")
                             parent_bone_name = "DEF-" + parent_bone_name
                             # Set the parent of the active armature's bone to match the 'metarig' bone's parent
