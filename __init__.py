@@ -43,7 +43,6 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
         for fcurve in list(armature_obj.animation_data.drivers):
             if 'pose.bones["DEF-' in fcurve.data_path:
                 armature_obj.animation_data.drivers.remove(fcurve)
-
     for bone in armature_obj.pose.bones:
         # Skip hips
         if bone.name.startswith("DEF-")  :
@@ -56,14 +55,12 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                     new_constraint.target = ct.target
                     new_constraint.subtarget = ct.subtarget
                     bone.constraints.remove(ct)
-
             stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
             for c in stretch_constraints:
                 if bone.name in ["DEF-spine.002"]:
                     bone.constraints.move(0, 1)
                 else:
                     bone.constraints.remove(c)
-
             if bone.name not in ["DEF-eye.L","DEF-eye.R","DEF-jaw"]:
                 # Add Limit Scale constraint
                 limit_scale = bone.constraints.new('LIMIT_SCALE')
@@ -79,11 +76,23 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                 limit_scale.max_x = 1.0
                 limit_scale.max_y = 1.0
                 limit_scale.max_z = 1.0
-
             # Special case: thigh or shin
             if "thigh" in bone.name.lower() or "shin" in bone.name.lower():
                 limit_scale.use_transform_limit = True
                 limit_scale.owner_space = 'LOCAL'
+
+    # Disable stretch on MCH-shin_ik bones
+    for bone_name in ["MCH-shin_ik.L", "MCH-shin_ik.R"]:
+        if bone_name in armature_obj.pose.bones:
+            bone = armature_obj.pose.bones[bone_name]
+            for constraint in bone.constraints:
+                # Check for IK constraints (most common with stretch)
+                if constraint.type == 'IK':
+                    constraint.use_stretch = False
+                # Also check for Stretch To constraints
+                elif constraint.type == 'STRETCH_TO':
+                    constraint.use_bulge_max = False
+                    constraint.use_bulge_min = False
 
 ## Adding leaf bones to fingers and toes in order to make Unreal happy
 def add_leaf_bones_for_fingers_and_toes(armature_obj):
