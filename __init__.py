@@ -15,7 +15,7 @@ bl_info = {
     "description": "Rigify rig converter for Godot/Unity/Unreal compatible humanoids",
     "location": "At the bottom of Rigify rig data/armature tab",
     "link": "https://github.com/catprisbrey/Rigodotify",
-    "version": (2, 2, 0),
+    "version": (2, 3, 0),
     "blender":(4,0,0)
 }
 
