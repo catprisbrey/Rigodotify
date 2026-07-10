@@ -15,7 +15,7 @@ bl_info = {
     "description": "Rigify rig converter for Godot/Unity/Unreal compatible humanoids",
     "location": "At the bottom of Rigify rig data/armature tab",
     "link": "https://github.com/catprisbrey/Rigodotify",
-    "version": (2, 3, 0),
+    "version": (2, 4, 0),
     "blender":(4,0,0)
 }
 
@@ -55,10 +55,29 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                     new_constraint.target = ct.target
                     new_constraint.subtarget = ct.subtarget
                     bone.constraints.remove(ct)
+                    if bone.name in ["DEF-spine.001"]:
+                        new_constraint.influence = .3 # Too stiff at 1.0, set low to .3
+                        another_new_constraint = bone.constraints.new('COPY_ROTATION')
+                        another_new_constraint.target = armature_obj
+                        another_new_constraint.subtarget = "tweak_spine.002"
+                        bone.constraints.move(2, 0) #move this spine .001 rotation to slot 0
+                    if bone.name in ["DEF-spine.002"]:
+                        new_constraint.influence = .5 # Too stiff at 1.0, set low to .2
+                        another_new_constraint = bone.constraints.new('COPY_ROTATION')
+                        another_new_constraint.target = armature_obj
+                        another_new_constraint.subtarget = "tweak_spine.003"
+                        another_new_constraint.influence = 1.0
+
+
             stretch_constraints = [c for c in bone.constraints if c.type == 'STRETCH_TO']
             for c in stretch_constraints:
                 if bone.name in ["DEF-spine.002"]:
-                    bone.constraints.move(0, 1)
+                    #bone.constraints.move(0, 1) #move this spine .002 rotation to slot 0
+                    c.influence = .9
+                    bone.constraints.move(2, 1) #move this spine .001 rotation to slot 0
+                    bone.constraints.move(0, 2) #move this spine strech_to to the last slot
+
+
                 else:
                     bone.constraints.remove(c)
             if bone.name not in ["DEF-eye.L","DEF-eye.R","DEF-jaw"]:
