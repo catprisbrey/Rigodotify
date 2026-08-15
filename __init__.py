@@ -15,7 +15,7 @@ bl_info = {
     "description": "Rigify rig converter for Godot/Unity/Unreal compatible humanoids",
     "location": "At the bottom of Rigify rig data/armature tab",
     "link": "https://github.com/catprisbrey/Rigodotify",
-    "version": (2, 4, 0),
+    "version": (2, 5,0),
     "blender":(4,0,0)
 }
 
@@ -112,6 +112,16 @@ def remove_all_drivers_and_stretch_constraints(armature_obj):
                 elif constraint.type == 'STRETCH_TO':
                     constraint.use_bulge_max = False
                     constraint.use_bulge_min = False
+
+        # Set control IK stretch to 0.0
+    if "upper_arm_parent.L" in armature_obj.pose.bones:
+        armature_obj.pose.bones["upper_arm_parent.L"]["IK_Stretch"] = 0.0
+    if "upper_arm_parent.R" in armature_obj.pose.bones:
+        armature_obj.pose.bones["upper_arm_parent.R"]["IK_Stretch"] = 0.0
+    if "thigh_parent.L" in armature_obj.pose.bones:
+        armature_obj.pose.bones["thigh_parent.L"]["IK_Stretch"] = 0.0
+    if "thigh_parent.R" in armature_obj.pose.bones:
+        armature_obj.pose.bones["thigh_parent.R"]["IK_Stretch"] = 0.0
 
 ## Adding leaf bones to fingers and toes in order to make Unreal happy
 def add_leaf_bones_for_fingers_and_toes(armature_obj):
@@ -286,91 +296,86 @@ class GodotMecanim_Panel(bpy.types.Panel):
     def draw(self, context):
         self.layout.operator("rig4mec.convert2godot")
 
-
 class GodotMecanim_Convert2Godot(bpy.types.Operator):
     bl_idname = "rig4mec.convert2godot"
     bl_label = "Convert to Rigodotify rig"
 
-
-
     def execute(self, context):
-        ob = bpy.context.object
+        # The active armature is the rig being converted
+        ob = context.active_object
 
-        ## For unreal, rename the rig "Armature"
+        if ob is None or ob.type != 'ARMATURE':
+            self.report({'ERROR'}, 'Active object must be an armature.')
+            return {'CANCELLED'}
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        ## For unreal, rename the rig "Armature"
-        ob.name = "Armature"
-        ob.data.name = "Armature"
-
-
-        if 'root' in ob.data.bones :
+        if 'root' in ob.data.bones:
             ob.data.bones['root'].use_deform = True
-        if 'DEF-breast.L' in ob.data.bones :
+        if 'DEF-breast.L' in ob.data.bones:
             ob.data.bones['DEF-breast.L'].use_deform = True
-        if 'DEF-breast.R' in ob.data.bones :
+        if 'DEF-breast.R' in ob.data.bones:
             ob.data.bones['DEF-breast.R'].use_deform = True
 
-        if 'DEF-pelvis.L' in ob.data.bones :
+        if 'DEF-pelvis.L' in ob.data.bones:
             ob.data.bones['DEF-pelvis.L'].use_deform = False
-        if 'DEF-pelvis.R' in ob.data.bones :
+        if 'DEF-pelvis.R' in ob.data.bones:
             ob.data.bones['DEF-pelvis.R'].use_deform = False
 
         bpy.ops.object.mode_set(mode='EDIT')
 
-        check_and_parent('DEF-shoulder.L','DEF-spine.003')
-        check_and_parent('DEF-shoulder.R','DEF-spine.003')
-        check_and_parent('DEF-upper_arm.L','DEF-shoulder.L')
-        check_and_parent('DEF-upper_arm.R','DEF-shoulder.R')
-        check_and_parent('DEF-thigh.L','DEF-spine')
-        check_and_parent('DEF-thigh.R','DEF-spine')
-        check_and_parent('DEF-jaw','DEF-spine.005')
-        check_and_parent('DEF-eye.L','DEF-spine.005')
-        check_and_parent('DEF-eye.R','DEF-spine.005')
+        check_and_parent('DEF-shoulder.L', 'DEF-spine.003')
+        check_and_parent('DEF-shoulder.R', 'DEF-spine.003')
+        check_and_parent('DEF-upper_arm.L', 'DEF-shoulder.L')
+        check_and_parent('DEF-upper_arm.R', 'DEF-shoulder.R')
+        check_and_parent('DEF-thigh.L', 'DEF-spine')
+        check_and_parent('DEF-thigh.R', 'DEF-spine')
+        check_and_parent('DEF-jaw', 'DEF-spine.005')
+        check_and_parent('DEF-eye.L', 'DEF-spine.005')
+        check_and_parent('DEF-eye.R', 'DEF-spine.005')
 
-        check_and_parent('DEF-upper_arm.L','DEF-upper_arm.L.001',True)
-        check_and_parent('DEF-forearm.L','DEF-forearm.L.001',True)
-        check_and_parent('DEF-forearm.L','DEF-upper_arm.L.001')
+        check_and_parent('DEF-upper_arm.L', 'DEF-upper_arm.L.001', True)
+        check_and_parent('DEF-forearm.L', 'DEF-forearm.L.001', True)
+        check_and_parent('DEF-forearm.L', 'DEF-upper_arm.L.001')
         check_and_remove('DEF-upper_arm.L.001')
         check_and_remove('DEF-forearm.L.001')
 
-        check_and_parent('DEF-hands.L','DEF-hands.L.001',True)
-        check_and_parent('DEF-hands.L','DEF-forearm.L.001')
-        check_and_parent('DEF-fingers.L','DEF-hands.L.001')
-        check_and_parent('DEF-hand.L','DEF-forearm.L')
-        check_and_parent('DEF-thumb.01.L','DEF-hand.L')
-        check_and_parent('DEF-f_index.01.L','DEF-hand.L')
-        check_and_parent('DEF-f_middle.01.L','DEF-hand.L')
-        check_and_parent('DEF-f_ring.01.L','DEF-hand.L')
-        check_and_parent('DEF-f_pinky.01.L','DEF-hand.L')
+        check_and_parent('DEF-hands.L', 'DEF-hands.L.001', True)
+        check_and_parent('DEF-hands.L', 'DEF-forearm.L.001')
+        check_and_parent('DEF-fingers.L', 'DEF-hands.L.001')
+        check_and_parent('DEF-hand.L', 'DEF-forearm.L')
+        check_and_parent('DEF-thumb.01.L', 'DEF-hand.L')
+        check_and_parent('DEF-f_index.01.L', 'DEF-hand.L')
+        check_and_parent('DEF-f_middle.01.L', 'DEF-hand.L')
+        check_and_parent('DEF-f_ring.01.L', 'DEF-hand.L')
+        check_and_parent('DEF-f_pinky.01.L', 'DEF-hand.L')
 
-        check_and_parent('DEF-upper_arm.R','DEF-upper_arm.R.001',True)
-        check_and_parent('DEF-forearm.R','DEF-forearm.R.001',True)
-        check_and_parent('DEF-forearm.R','DEF-upper_arm.R.001')
+        check_and_parent('DEF-upper_arm.R', 'DEF-upper_arm.R.001', True)
+        check_and_parent('DEF-forearm.R', 'DEF-forearm.R.001', True)
+        check_and_parent('DEF-forearm.R', 'DEF-upper_arm.R.001')
         check_and_remove('DEF-upper_arm.R.001')
         check_and_remove('DEF-forearm.R.001')
 
-        check_and_parent('DEF-hands.R','DEF-hands.R.001',True)
-        check_and_parent('DEF-hands.R','DEF-forearm.R.001')
-        check_and_parent('DEF-fingers.R','DEF-hands.R.001')
-        check_and_parent('DEF-hand.R','DEF-forearm.R')
-        check_and_parent('DEF-thumb.01.R','DEF-hand.R')
-        check_and_parent('DEF-f_index.01.R','DEF-hand.R')
-        check_and_parent('DEF-f_middle.01.R','DEF-hand.R')
-        check_and_parent('DEF-f_ring.01.R','DEF-hand.R')
-        check_and_parent('DEF-f_pinky.01.R','DEF-hand.R')
+        check_and_parent('DEF-hands.R', 'DEF-hands.R.001', True)
+        check_and_parent('DEF-hands.R', 'DEF-forearm.R.001')
+        check_and_parent('DEF-fingers.R', 'DEF-hands.R.001')
+        check_and_parent('DEF-hand.R', 'DEF-forearm.R')
+        check_and_parent('DEF-thumb.01.R', 'DEF-hand.R')
+        check_and_parent('DEF-f_index.01.R', 'DEF-hand.R')
+        check_and_parent('DEF-f_middle.01.R', 'DEF-hand.R')
+        check_and_parent('DEF-f_ring.01.R', 'DEF-hand.R')
+        check_and_parent('DEF-f_pinky.01.R', 'DEF-hand.R')
 
-        # common bones
-        check_and_parent('DEF-thigh.L','DEF-thigh.L.001',True)
-        check_and_parent('DEF-shin.L','DEF-shin.L.001',True)
-        check_and_parent('DEF-shin.L','DEF-thigh.L.001')
-        check_and_parent('DEF-foot.L','DEF-shin.L.001')
+        # Common bones
+        check_and_parent('DEF-thigh.L', 'DEF-thigh.L.001', True)
+        check_and_parent('DEF-shin.L', 'DEF-shin.L.001', True)
+        check_and_parent('DEF-shin.L', 'DEF-thigh.L.001')
+        check_and_parent('DEF-foot.L', 'DEF-shin.L.001')
 
-        check_and_parent('DEF-feet.L','DEF-feet.L.001',True)
-        check_and_parent('DEF-feet.L','DEF-shin.L.001')
-        check_and_parent('DEF-toes.L','DEF-feet.L.001')
-        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_parent('DEF-feet.L', 'DEF-feet.L.001', True)
+        check_and_parent('DEF-feet.L', 'DEF-shin.L.001')
+        check_and_parent('DEF-toes.L', 'DEF-feet.L.001')
+        check_and_parent('DEF-toe.R', 'DEF-foot.R.001')
         check_and_remove('DEF-feet.L.001')
         check_and_remove('DEF-hands.L.001')
 
@@ -378,15 +383,15 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-shin.L.001')
         check_and_remove('DEF-foot.L.001')
 
-        check_and_parent('DEF-thigh.R','DEF-thigh.R.001',True)
-        check_and_parent('DEF-shin.R','DEF-shin.R.001',True)
-        check_and_parent('DEF-shin.R','DEF-thigh.R.001')
-        check_and_parent('DEF-foot.R','DEF-shin.R.001')
+        check_and_parent('DEF-thigh.R', 'DEF-thigh.R.001', True)
+        check_and_parent('DEF-shin.R', 'DEF-shin.R.001', True)
+        check_and_parent('DEF-shin.R', 'DEF-thigh.R.001')
+        check_and_parent('DEF-foot.R', 'DEF-shin.R.001')
 
-        check_and_parent('DEF-feet.R','DEF-feet.R.001',True)
-        check_and_parent('DEF-feet.R','DEF-shin.R.001')
-        check_and_parent('DEF-toes.R','DEF-feet.R.001')
-        check_and_parent('DEF-toe.R','DEF-foot.R.001')
+        check_and_parent('DEF-feet.R', 'DEF-feet.R.001', True)
+        check_and_parent('DEF-feet.R', 'DEF-shin.R.001')
+        check_and_parent('DEF-toes.R', 'DEF-feet.R.001')
+        check_and_parent('DEF-toe.R', 'DEF-foot.R.001')
         check_and_remove('DEF-feet.R.001')
         check_and_remove('DEF-hands.R.001')
 
@@ -394,169 +399,206 @@ class GodotMecanim_Convert2Godot(bpy.types.Operator):
         check_and_remove('DEF-shin.R.001')
         check_and_remove('DEF-foot.R.001')
 
-        check_and_parent('DEF-breast.L','DEF-spine.003')
-        check_and_parent('DEF-breast.R','DEF-spine.003')
-        check_and_parent('DEF-tail','DEF-spine')
+        check_and_parent('DEF-breast.L', 'DEF-spine.003')
+        check_and_parent('DEF-breast.R', 'DEF-spine.003')
+        check_and_parent('DEF-tail', 'DEF-spine')
 
-        ob.name = "Armature"
+        # Fix some odd parenting issues of failed constraints
 
-        # Fix some odd parenting issues of failed contraints
-        if "DEF-breast.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-breast.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-breast.R" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-breast.R"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "breast.R"
 
-        if "DEF-breast.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-breast.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-breast.L" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-breast.L"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "breast.L"
 
-        if "DEF-shoulder.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-shoulder.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-shoulder.R" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-shoulder.R"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "shoulder.R"
 
-        if "DEF-shoulder.L" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-shoulder.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-shoulder.L" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-shoulder.L"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "shoulder.L"
 
-        if "DEF-jaw" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-jaw"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-jaw" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-jaw"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "jaw"
 
-        if "DEF-eye.L" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-eye.L"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-eye.L" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-eye.L"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "eye.L"
 
-        if "DEF-eye.R" in ob.data.edit_bones :
-            constraint = bpy.data.objects["Armature"].pose.bones["DEF-eye.R"].constraints.new('COPY_TRANSFORMS')
-            constraint.target = bpy.data.objects["Armature"]
+        if "DEF-eye.R" in ob.data.edit_bones:
+            constraint = ob.pose.bones["DEF-eye.R"].constraints.new(
+                'COPY_TRANSFORMS'
+            )
+            constraint.target = ob
             constraint.subtarget = "eye.R"
-
-
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        # # fix a few names quick
-        # namelist = [
-        #         ("DEF-spine", "DEF-hips"),
-        #         ("DEF-spine.004","DEF-neck"),
-        #         ("DEF-spine.005", "DEF-head")
-        #         ]
-        #
-        # for name, newname in namelist:
-        #     # get the pose bone with name
-        #     pb = ob.pose.bones.get(name)
-        #     # continue if no bone of that name
-        #     if pb is None:
-        #         continue
-        #     # rename
-        #     pb.name = newname
-
+        # Reparent bones based on the selected metarig
         reparent_bones_to_metarig_parents()
 
-        # hide all the uncommonly used controls
+        # Hide all the uncommonly used controls
 
         collections_to_hide = [
             "Torso (Tweak)",
+            "Arm.R (Tweak)",
+            "Arm.L (Tweak)",
+            "Leg.L (Tweak)",
+            "Leg.R (Tweak)",
             "Fingers (Detail)",
             "Torso (Tweak)",
             "Fingers (Detail)",
-            "Arm.R (Tweak)",
-            "Arm.L (Tweak)",
-            "Arm.L (FK)",
-            "Arm.R (FK)",
-            "Leg.L (Tweak)",
-            "Leg.L (FK)",
-            "Leg.R (FK)",
-            "Leg.R (Tweak)",
             "Spine (Tweak)"
         ]
 
+
+
         for collection_name in collections_to_hide:
-            if collection_name in bpy.context.object.data.collections:
-                bpy.context.object.data.collections[collection_name].is_visible = False
+            if collection_name in ob.data.collections:
+                ob.data.collections[collection_name].is_visible = False
             else:
                 print(f"Collection '{collection_name}' not found.")
 
-
         bpy.ops.object.posemode_toggle()
-        # Set IK_Stretch property to 0 for specified bones
 
+        # Set IK_Stretch property to 0 for specified bones
         remove_all_drivers_and_stretch_constraints(ob)
         add_leaf_bones_for_fingers_and_toes(ob)
         rename_for_unreal(ob)
         remove_invalid_drivers_from_armature(ob)
+
         ob.data["last_rig_id"] = ob.data.get("rig_id")
+
         bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Set armature display mode to 'Wire'
+        # ob.display_type = 'WIRE'
+
+        # Name the converted rig "Armature" if that name is available
+        existing_armature = bpy.data.objects.get("Armature")
+
+        if existing_armature is None or existing_armature == ob:
+            ob.name = "Armature"
 
         self.report({'INFO'}, 'Rigodotify rig is ready!')
 
         # Set armature viewport display to 'In Front'
         ob.show_in_front = True
 
-        # Set armature display mode to 'Wire'
-        # ob.display_type = 'WIRE'
-
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 def reparent_bones_to_metarig_parents():
-    # Ensure we harve the active armature and the 'metarig' armature
-    godot_rig = bpy.data.objects.get("Armature")
-    metarig_armature = bpy.data.objects.get('metarig')
-    # Ensure we have the active armature and the 'metarig' armature
+    # Active armature = Godot rig
+    godot_rig = bpy.context.active_object
 
-    # Check if the active object is an armature and 'metarig' exists
+    # Check if the active object is an armature
     if godot_rig is None or godot_rig.type != 'ARMATURE':
         print("Error: The active object is not an armature.")
         return
 
-    if metarig_armature is None or metarig_armature.type != 'ARMATURE':
-        print("Error: 'metarig' armature not found.")
+    # Any other selected armature = metarig
+    selected_armatures = [
+        obj for obj in bpy.context.selected_objects
+        if obj.type == 'ARMATURE' and obj != godot_rig
+    ]
+
+    # Make sure exactly one other armature is selected
+    if len(selected_armatures) != 1:
+        print("Error: Select the Godot rig and exactly one metarig.")
         return
+
+    metarig_armature = selected_armatures[0]
+
+    print(f"Godot rig: {godot_rig.name}")
+    print(f"Metarig: {metarig_armature.name}")
+
     # EDIT MODE IN GODOT RIG
     bpy.ops.object.mode_set(mode='EDIT')
+
     # Loop through each bone in the active armature
     print("START BONE LOOP")
     for bone in godot_rig.data.edit_bones:
-        # Check if the parent bone name starts with "ORG-" this means is a extra bone
+
+        # Check if the parent bone name starts with "ORG-"
+        # This means it is an extra bone
         if bone.parent:
             if bone.parent.name.startswith("ORG-"):
-                # Check if the bone name starts with "DEF-" in the active armature
+
+                # Check if the bone name starts with "DEF-"
                 if bone.name.startswith("DEF-"):
-                    # Remove the 'DEF-' prefix to match the corresponding bone name in the 'metarig'
+
+                    # Remove the 'DEF-' prefix to match the
+                    # corresponding bone name in the metarig
                     active_bone_name = bone.name[4:]
 
-                    # Try to get the corresponding bone from the 'metarig'
+                    # Try to get the corresponding bone from the metarig
                     if active_bone_name in metarig_armature.data.bones:
-                        print(f"Bone {active_bone_name} found in 'metarig'.")
+                        print(f"Bone {active_bone_name} found in '{metarig_armature.name}'.")
+
                         metarig_bone_name = active_bone_name
                         metarig_bone = metarig_armature.data.bones[metarig_bone_name]
 
-                        # Check the parent of the bone in the 'metarig'
+                        # Check the parent of the bone in the metarig
                         if metarig_bone.parent:
                             parent_bone_name = metarig_bone.parent.name
-                            #Fix diferent bone names between rigs
+
+                            # Fix different bone names between rigs
                             if parent_bone_name == "spine.005":
                                 parent_bone_name = "Head"
+
                             if parent_bone_name == "spine.004":
                                 parent_bone_name = "neck_01"
+
                             if parent_bone_name == "spine":
                                 parent_bone_name = "pelvis"
-                            print(f"PARENT OF {active_bone_name} = {parent_bone_name}.")
+
+                            print(
+                                f"PARENT OF {active_bone_name} = {parent_bone_name}."
+                            )
+
                             parent_bone_name = "DEF-" + parent_bone_name
-                            # Set the parent of the active armature's bone to match the 'metarig' bone's parent
+
+                            # Set the parent of the active armature's bone
+                            # to match the metarig bone's parent
                             if parent_bone_name in godot_rig.data.bones:
+
                                 active_bone = godot_rig.data.bones[bone.name]
                                 parent_bone = godot_rig.data.edit_bones[parent_bone_name]
+
                                 bone.parent = parent_bone
-                                print(f"Reparented {bone.name} to {parent_bone_name}")
+
+                                print(
+                                    f"Reparented {bone.name} to {parent_bone_name}"
+                                )
+
                                 # Constraint the bone to its controller
-                                constraint = bpy.data.objects["Armature"].pose.bones[bone.name].constraints.new('COPY_TRANSFORMS')
-                                constraint.target = bpy.data.objects["Armature"]
+                                constraint = godot_rig.pose.bones[
+                                    bone.name
+                                ].constraints.new('COPY_TRANSFORMS')
+
+                                constraint.target = godot_rig
                                 constraint.subtarget = bone.name[4:]
 
 def register():
